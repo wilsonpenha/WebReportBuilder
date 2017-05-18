@@ -1,0 +1,27 @@
+<%@ page import = "reports.bean.BeanObject, br.com.hwork.text.Formatter, java.util.Vector"%>
+<%@ taglib prefix="hwork" uri='/WEB-INF/tld/hwork.tld'%>
+
+<jsp:useBean id="beanPage" scope="request" class="reports.bean.BeanChartGraphic"/>
+<jsp:setProperty name="beanPage" property="*"/>
+
+<body topmargin="0" leftmargin="0" bottommargin="0" rightmargin="0">
+<form method="post" onSubmit="return ConfirmaSubmit(this,'<%=beanPage.getBeanForm()%>')">
+<input type="hidden" name="dbAction">
+<input type="hidden" name="formAction" value="<%=beanPage.getDbAction()%>">
+<input type="hidden" name="blockNumber" value="<%=beanPage.getBlockNumber()%>">
+<input type="hidden" name="blockSize" value="<%=beanPage.getBlockSize()%>">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+    <td height="30" class="topTitleCenter"><%=beanPage.getPObject().getClass().getName().substring(4)%> - Add</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>
+          <table width="100%" border="0" cellPadding="0" cellSpacing="0">
+            <tr>              <td width="32%" class="dataLabel">*Chart Name : </td>              <td width="66%" class="inputLocation">                <input type="hidden" name="chartGraphicId" value="<%=beanPage.getChartGraphicId()%>">                <input type="text" class="dataInput" name="chartName" tabIndex="2" maxlength="60" size="60" value="<%=beanPage.getChartName()%>">              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">*Report Source : </td>              <td width="66%" class="inputLocation">                <%                  Vector objsreportId = reports.Report.findAll();                  String[] idsreportId = {"reportId"};                  String[] objValuesreportId = {"reportName"};                %>                <hwork:ComboList name="reportId"                   ids="<%=idsreportId%>"                   objValues="<%=objValuesreportId%>"                   onEvent="tabIndex=\"3\""                   objs="<%=objsreportId%>">                </hwork:ComboList>              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">X Label : </td>              <td width="66%" class="inputLocation">                <input type="text" class="dataInput" name="xLabel" tabIndex="4" maxlength="200" size="60" value="<%=beanPage.getXLabel()%>">              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">Y Label : </td>              <td width="66%" class="inputLocation">                <input type="text" class="dataInput" name="yLabel" tabIndex="5" maxlength="200" size="60" value="<%=beanPage.getYLabel()%>">              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">*Legend Location : </td>              <td width="66%" class="inputLocation">                <Select name="legendLocation" tabIndex="6">                   <option value="Left">Left</option>                   <option value="Right">Right</option>                   <option value="Top">Top</option>                   <option value="Bottom">Bottom</option>                </Select>              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">*Chart Height : </td>              <td width="66%" class="inputLocation">                <input type="text" class="dataInput" name="chartHeight" tabIndex="7" maxlength="4" size="4" value="<%=beanPage.getChartHeight()%>">              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">*Chart Width : </td>              <td width="66%" class="inputLocation">                <input type="text" class="dataInput" name="chartWidth" tabIndex="8" maxlength="4" size="4" value="<%=beanPage.getChartWidth()%>">              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">*Chart Type : </td>              <td width="66%" class="inputLocation">                <Select name="chartType" tabIndex="9">                   <option value="Pie">Pie</option>                   <option value="Bar">Bar</option>                   <option value="Line">Line</option>                </Select>              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">*Chart SubType : </td>              <td width="66%" class="inputLocation">                <Select name="chartSubtype" tabIndex="10">                   <option value="Type 1">Type 1</option>                   <option value="Type 2">Type 2</option>                </Select>              </td>            </tr>            <tr>              <td width="32%" class="dataLabel">Data Range Column : </td>              <td width="66%" class="inputLocation">                <%                  Vector objsdataRangeColumn = reports.Variables.findAll();                  String[] idsdataRangeColumn = {"variablesId"};                  String[] objValuesdataRangeColumn = {"variableName"};                %>                <hwork:ComboList name="dataRangeColumn"                   ids="<%=idsdataRangeColumn%>"                   objValues="<%=objValuesdataRangeColumn%>"                   onEvent="tabIndex=\"11\""                   blank="true"                   objs="<%=objsdataRangeColumn%>">                </hwork:ComboList>              </td>            </tr>          </table>
+      </td>
+	</tr>
+    <script>seta_foco_no_primeiro()</script>
+

@@ -1,0 +1,167 @@
+﻿# NLS_MESSAGEFORMAT_NONE
+# Content for homepage.  Text begins with @ and ends with the ;
+# This is VERY important.  This is not a standard java property file
+#--------------------START ---SIDEBAR TEXT----------------------------
+sidebar.text@
+<h2 class="bar-blue-med">About BluePages</h2>
+<p>A <a class="popup-link" style="display:inline" href="javascript:contextHelp('/html/about_bluepages.html')">snapshot</a> of the
+ significance of BluePages to IBM and how you can help.</p>
+<div>&nbsp;</div><br />
+
+<h2 class="bar-blue-med">Profile monitor</h2>
+<p><strong>Could an IBM sales team find you if they needed you?</strong></p>
+ <p>Use the new BluePages profile monitor to take a look at how your profile stacks
+    up to your peers.</p>
+<p>Enter your manager's e-mail address in the tool and view the result.</p>
+<p>Log in and access the <a href="/bluepages/profilemonitor.wss"> Profile monitor</a></p>
+<div>&nbsp;</div><br />
+
+<h2 class="bar-blue-med">BluePages survey</h2>
+<p>BluePages "<strong>Dynamic Organizational Chart Creation</strong>" feature to help you understand how a person relates to peers and management...</p>
+<script type='text/javascript' language='JavaScript1.4'>
+   function PulseOptions() {}
+PulseOptions.POLLS = [['081269', 1727]];</script>
+
+<div id='081269'>
+<noscript>This poll requires JavaScript to be enabled.</noscript>
+</div>
+<script language='JavaScript1.4' type='text/javascript' src='//w3.webahead.ibm.com/widget/pulse/load.js'></script>
+
+<div>&nbsp;</div>
+<div id='081269'></div>
+
+;
+#-------------------END SIDEBAR TEXT-------------------------------
+#-------------------START HOMEPAGE MAIN PANEL TEXT-------------------------------
+homepage.main.text@
+
+<!--Homepage main content start-->
+
+<div id="caseStudy0" style="height:300px">
+<table cellpadding="4" cellspacing="4">
+
+<tr>
+  <td colspan="2"><h2 class="bar-green-dark">Features of the month</h2></td>
+</tr>
+<tr>
+   <td colspan="2">1 of 4&nbsp;&nbsp;&lt; <a href="javascript:navigate('previous')"> Prev</a> |
+
+<a href="javascript:navigate('forward')">Next</a> &gt;</td>
+</tr>
+<tr>
+  <td width="624" bgcolor="#FFFFFF"><p><strong>Did you know: Your IP Telephony Number (ITN) in BluePages</strong></p>
+<p>International calls, dial the <strong>ITN</strong> for IP-enabled users when displayed in BluePages...</p>
+<p>Transforming the way you work - The use of ITNs can reduce costs for international dialing. You won't see any change when dialing an individual using either an external number or a tieline number displayed in BluePages. When available, the ITN provides an additional alternative which is the preferred choice for international calling,  <a href="http://w3.ibm.com/tools/it/ittools.nsf/main/voice_itn">go deeper</a>.</p>
+</td>
+  <td width="100"><div align="center"><img src="images/ITN2_110x110.gif" height="110" width="110" alt="An image of a telephone keypad" /></div></td>
+
+</tr>
+</table>
+</div>
+
+
+<div id="caseStudy1" style="height:300px; DISPLAY:none">
+<table cellpadding="4" cellspacing="4">
+
+<tr>
+  <td colspan="2"><h2 class="bar-green-dark">Features of the month</h2></td>
+</tr>
+<tr>
+   <td colspan="2">2 of 4&nbsp;&nbsp;&lt; <a href="javascript:navigate('previous')"> Prev</a> |
+
+<a href="javascript:navigate('forward')">Next</a> &gt;</td>
+</tr>
+<tr>
+  <td width="624" bgcolor="#FFFFFF"><p><strong>Customize your workplace for quick BluePages access</strong></p>
+<p>Access BluePages easily from <strong>Lotus Notes</strong>...</p>
+<p>Enhance your productivity today - add a button to your Notes Toolbar for a
+<a href="/bluepages/help/en/whk/html/before_i_upgraded_to_notes_7_i_had_an_notes_icon_to_access_bluepages_how_do_i_get_it_back.html">simple name search</a>.
+ And create a second button which enables you to
+<a href="/bluepages/help/en/whk/html/how_can_i_most_easily_find_the_bluepages_entry_for_the_sender_of_a_note.html">
+go directly from a note to see the BluePages entry</a> of the sender or the author of a document in a TeamRoom.</p>
+</td>
+  <td width="100"><div align="center"><img src="images/BP_LNtoolbar_95x95.gif" height="95" width="95" alt="BluePages in your Lotus Notes toolbar" /></div></td>
+
+</tr>
+</table>
+</div>
+
+<div id="caseStudy2" style="height:300px; DISPLAY:none">
+
+<table cellpadding="4" cellspacing="4">
+<tr>
+  <td colspan="2"><h2 class="bar-green-dark" >Features of the month</h2></td>
+  </tr>
+              <tr>
+                <td colspan="2">3 of 4&nbsp;&nbsp;&lt; <a href="javascript:navigate('previous')"> Prev</a> |
+
+<a href="javascript:navigate('forward')">Next </a>&gt;</td>
+              </tr>
+<tr>
+  <td width="624" bgcolor="#FFFFFF"><p><strong>Customize your workplace and have a quick access to BluePages</strong></p>
+
+<p>Access BluePages easily from <strong>Sametime</strong>...</p>
+<p>Add  'BluePages bot' to your buddy list! You can use Sametime to find out an employee's phone number, office location or any other information
+stored in BluePages. By using a "bot", you can request and receive BluePages data <a href="/bluepages/help/en/whk/html/bp_bot.html">through your Sametime</a> message window. </p>
+  </td>
+  <td width="100"><div align="center"><img src="images/whoisbot95x95.gif" height="95" width="95" alt="BluePages bot in your Sametime buddy list" /></div></td>
+</tr>
+</table>
+</div>
+<div id="caseStudy3" style="height:300px; DISPLAY:none">
+
+<table cellpadding="4" cellspacing="4">
+<tr>
+  <td colspan="2"><h2 class="bar-green-dark" >Features of the month</h2></td>
+  </tr>
+              <tr>
+                <td colspan="2">4 of 4&nbsp;&nbsp;&lt; <a href="javascript:navigate('previous')"> Prev</a> |
+
+<a href="javascript:navigate('forward')">Next </a>&gt;</td>
+              </tr>
+<tr>
+  <td width="624" bgcolor="#FFFFFF"><p><strong>Customize your workplace and have a quick access to BluePages</strong></p>
+    <p>Access BluePages easily from <strong>Internet Explorer or Mozilla</strong>...</p>
+<p>You can perform a quick name search while working with your browser!  <a href="/bluepages/help/en/whk/html/search_in_browser.html">Add this capability</a> to either Firefox or Internet Explorer.</p>
+  </td>
+<td width="100"><div align="center"><img src="images/browser95x95.gif" height="95" width="95" alt="BluePages in your browser links bar" /></div></td>
+
+</tr>
+</table>
+</div>
+<br />
+<div class="float-left" style="width:48%; margin-right:5px;">
+
+<div class="callout">
+
+<h2 class="bar-green-dark">Vignettes of the month</h2>
+
+
+<p><strong>Effective search</strong></p>
+
+<p><img src="images/magnifying50x50.gif" height="50" width="50" class="float-left" style="margin-right: 10px" alt="Magnifying glass" /><strong>'Wildcard' is an effective way to perform simple searches</strong>. The Wildcard is a substitute for which you are not sure of, such as the spelling of a name. In the search bar, you can use an asterisk as a wildcard in place of character and enter only what you know for sure to perform your simple search. Download this <a href="http://ehngsa.ibm.com/~tawaa/public/BPHome/wildcard.wmv" >one-minute video</a> to learn how to use the wildcard to be more productive in using BluePages.</p>
+
+<p><strong>Use 'advanced search' or 'search entire profile'</strong> to target your query by specifying information for one or more of several fields. Search by expertise or search by keyword to locate someone with the experience and knowledge you need. Download this <a href="http://ehngsa.ibm.com/~tawaa/public/BPHome/BPSearching.wmv">five-minute video</a> to learn how to use BluePages advanced searching facilities to find the experts.</p>
+
+<p>You can also consult the <a href="http://w3.ibm.com/bluepages/help/en/whk/html/searching_with_bluepages_plus.html">BluePages user guide</a> about search.</p>
+                    <br />
+
+          </div>
+</div>
+
+<div class="float-right" style="width:49%; margin-right:5px;">
+
+<div class="callout">
+
+<h2 class="bar-blue-med-dark">Expertise location</h2>
+
+
+        <p><strong>Unleash the power!</strong></p>
+        <p>BluePages allows us to find colleagues based on their expertise, projects and business interests. It becomes an even more valuable tool as more employees improve their profiles.</p>
+<p>Just imagine if every single person in IBM maintained their profile. What an amazing resource - one integrated global IBM community which leverages our collective expertise by spanning countries, continents, and cultures. A big competitive advantage!</p>
+<p>Don't wait, Log in and <a href="http://w3.ibm.com/bluepages/editJobContact.wss">update your BluePages profile</a>.</p>
+
+</div><p>&nbsp;</p> </div>
+<br /><br />
+;
+#-------------------END HOMEPAGE MAIN PANEL TEXT-------------------------------

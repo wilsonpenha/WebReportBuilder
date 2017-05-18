@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context reloadable="true">
+	<Resource auth="Container" 
+	   driverClassName="oracle.jdbc.driver.OracleDriver" 
+	   factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory" 
+	   maxActive="10" 
+	   maxIdle="20" 
+	   maxWait="60000" 
+	   name="jdbc/report_ds" 
+	   password="123" 
+	   type="javax.sql.DataSource" 
+	   url="jdbc:oracle:thin:@192.168.0.5:1521:orcl" 
+	   username="report"/>
+	<Resource auth="Container" 
+	   driverClassName="org.postgresql.Driver" 
+	   factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory" 
+	   maxActive="10" 
+	   maxIdle="20" 
+	   maxWait="60000" 
+	   name="jdbc/scoweb_ds" 
+	   password="123" 
+	   type="javax.sql.DataSource" 
+	   url="jdbc:postgresql://192.168.0.4/iseg2" 
+	   username="postgres"/>
+	
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<WatchedResource>META-INF/context.xml</WatchedResource>
+	
+</Context>

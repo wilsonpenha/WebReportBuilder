@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration //EN" "http://struts.apache.org/dtds/tiles-config_1_3.dtd">
+<tiles-definitions>
+	<!-- Base Tiles Definition -->
+	<definition name="base.definition" path="/layouts/bodyLayout.jsp">
+		<put name="header" value="/layouts/header.jsp" />
+		<put name="navigation" value="/navigation.do" />
+		<put name="footer" value="/layouts/footer.jsp" />
+	</definition>
+	<!-- Tiles Definition of welcome page -->
+	<definition name="page.welcome" extends="base.definition">
+		<put name="title" value="Welcome page" />  
+		<put name="body" value="/layouts/index.jsp" />
+	</definition>
+	<!-- Tiles Definition of BookList -->
+	<definition name="page.booklist" extends="base.definition">
+		<put name="title" value="Book list page" />
+		<put name="body" value="/layouts/bookList.jsp" />
+	</definition>
+	<!-- Tiles Definition of Report manager -->
+	<definition name="page.report" extends="base.definition">
+		<put name="title" value="Report Manager" />
+		<put name="body" value="/jsp/main.jsp?pageId=35" />
+	</definition>
+	<!-- Tiles Definition for body.template -->
+	<definition name="body.template.definition" path="/layouts/bodyTemplate.jsp">
+		<put name="title" value="Web ReportBuilder tool for JasperReports" />
+		<put name="main" value="/jsp/main.jsp" />
+	</definition>
+	<!-- Tiles Definition for Report Form -->
+	<definition name="report.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReport/displayList.jsp"/>
+	</definition>
+	<definition name="report.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReport/insert.jsp" />
+	</definition>
+	<definition name="report.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReport/update.jsp" />
+	</definition>
+	<definition name="report.preview" path="/jsp/beanMainReport/body.jsp">
+	</definition>
+	<definition name="report.colorPicker" path="/jsp/colorPicker.jsp">
+	</definition>
+	<definition name="report.server.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReportServer/displayList.jsp"/>
+	</definition>
+	<definition name="report.server.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReportServer/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for QueryBuilder Form -->
+	<definition name="queryBuilder.display" extends="body.template.definition">
+		<put name="content-main" value="/jsp/queryBuilder/display.jsp" />
+	</definition>
+	<!-- Tiles Definition for Variables Form -->
+	<definition name="variables.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanVariables/displayList.jsp" />
+	</definition>
+	<definition name="variables.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanVariables/insert.jsp" />
+	</definition>
+	<definition name="variables.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanVariables/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for Parameters Form -->
+	<definition name="parameters.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanParameters/displayList.jsp" />
+	</definition>
+	<definition name="parameters.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanParameters/insert.jsp" />
+	</definition>
+	<definition name="parameters.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanParameters/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for Fields Form -->
+	<definition name="fields.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanFields/displayList.jsp" />
+	</definition>
+	<definition name="fields.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanFields/insert.jsp" />
+	</definition>
+	<definition name="fields.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanFields/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for Columns Form -->
+	<definition name="columns.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanColumns/displayList.jsp" />
+	</definition>
+	<definition name="columns.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanColumns/insert.jsp" />
+	</definition>
+	<definition name="columns.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanColumns/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for TitleColumns Form -->
+	<definition name="titlecolumns.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReportColumns/displayList.jsp" />
+	</definition>
+	<definition name="titlecolumns.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReportColumns/insert.jsp" />
+	</definition>
+	<definition name="titlecolumns.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanReportColumns/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for PageColumns Form -->
+	<definition name="pagecolumns.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanPageColumns/displayList.jsp" />
+	</definition>
+	<definition name="pagecolumns.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanPageColumns/insert.jsp" />
+	</definition>
+	<definition name="pagecolumns.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanPageColumns/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for SummaryColumns Form -->
+	<definition name="summarycolumns.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanSummaryColumns/displayList.jsp" />
+	</definition>
+	<definition name="summarycolumns.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanSummaryColumns/insert.jsp" />
+	</definition>
+	<definition name="summarycolumns.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanSummaryColumns/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for Groups Form -->
+	<definition name="groups.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanGroups/displayList.jsp" />
+	</definition>
+	<definition name="groups.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanGroups/insert.jsp" />
+	</definition>
+	<definition name="groups.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanGroups/update.jsp" />
+	</definition>
+	<!-- Tiles Definition for GroupColumns Form -->
+	<definition name="groupcolumns.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanGroupColumns/displayList.jsp" />
+	</definition>
+	<definition name="groupcolumns.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanGroupColumns/insert.jsp" />
+	</definition>
+	<definition name="groupcolumns.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanGroupColumns/update.jsp" />
+	</definition>
+</tiles-definitions>

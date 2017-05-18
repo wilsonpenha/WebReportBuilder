@@ -1,0 +1,51 @@
+<%@ page import = "reports.bean.BeanObject, br.com.hwork.text.Formatter, java.util.Vector"%>
+<%@ taglib prefix="hwork" uri='/WEB-INF/tld/hwork.tld'%>
+
+<jsp:useBean id="beanPage" scope="request" class="reports.bean.BeanChartGraphic"/>
+
+<body topmargin="0" leftmargin="0" bottommargin="0" rightmargin="0">
+<form method="post" onSubmit="return ConfirmaSubmit(this,'<%=beanPage.getBeanForm()%>')">
+<input type="hidden" name="dbAction">
+<input type="hidden" name="formAction" value="<%=beanPage.getDbAction()%>">
+<input type="hidden" name="blockNumber" value="<%=beanPage.getBlockNumber()%>">
+<input type="hidden" name="blockSize" value="<%=beanPage.getBlockSize()%>">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+    <td height="30" class="topTitleCenter"><%=beanPage.getPObject().getClass().getName().substring(4)%> - List</td>
+  </tr>
+        <tr>
+          <td>
+            <table width="100%" border="0" cellPadding="0" cellSpacing="0">
+              <input type="hidden" name="objIds">
+              <tr>
+                <td class="CabecalhoCampo">
+                <%
+                  String[] ids = {"chartGraphicId"};
+                  String[] objValues = {"chartName", "reportId", "chartType", "chartSubtype"};
+                  String[] titles = {"", "chartName", "Report Id", "Chart Type", "Chart SubType"};
+                  String[] colsWidth = {"1%", "25%", "25%", "25%", "25%"};
+                %>
+                <hwork:TableCheckHRef name="objIds" ids="<%=ids%>"
+             	objs="<%=beanPage.getList()%>"
+                  width="100%" colsWidth="<%=colsWidth%>" colors="#D3DCE7,#F7F4F2" border="0"
+                  objValues="<%=objValues%>" titles="<%=titles%>"
+                  blockSize="<%=Integer.parseInt(beanPage.getBlockSize())%>"
+                  blockNumber="<%=Integer.parseInt(beanPage.getBlockNumber())%>"
+                  onEvent="javascript:setAction(document.forms[0],ACTION_FORM_UPDATE);var obj = new Object();obj.value='#OBJIDS';if (elementos_do_formulario1('objIds','0') == 1){document.forms[0].objIds.value = obj.value;} else {document.forms[0].objIds[0].value = obj.value;}window.document.forms[0].submit();">
+                </hwork:TableCheckHRef>
+                </td>
+              </tr>
+            </table>
+          </td> 
+        </tr>
+        <tr>
+	    <td>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tituloPrinCenter">
+            <tr>
+              <td height="16" width="50%" <% if (!beanPage.isFirstBlock()) {%> class="tdPrevious"><input type="button" value="Previous" name="btnAnterior" class="btnList" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_PRIOR%>');document.forms[0].submit();"><%} else {%>>&nbsp;<%}%></td>
+              <td width="50%" <% if (!beanPage.isLastBlock()) {%> class="tdNext"><input type="button" value="Next" name="btnProximo" class="btnList" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_NEXT%>');document.forms[0].submit();"><%} else {%>>&nbsp;<%}%></td>
+            </tr>
+          </table>
+          </td>
+	  </tr>
+

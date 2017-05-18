@@ -1,0 +1,64 @@
+# NLS_MESSAGEFORMAT_NONE
+######################################################################################
+# ShiftTimeValues.txt
+#
+# Note:  This contains a list of times and the descriptions for those times
+#
+# The list will be ordered from Time.0-n as com.ibm.linksupport.dao.ShiftStartEndValuesDao
+# requires it.
+# The values should be Java timezone ID|Description of timezone
+#
+# We are currently using descriptions as shown in Windows region settings.
+# List was obtained here:
+# http://www.unicode.org/cldr/data/docs/design/formatting/zone_log.html#windows_ids
+######################################################################################
+Time.0=00:00:00
+Time.1=01:00:00
+Time.2=02:00:00
+Time.3=03:00:00
+Time.4=04:00:00
+Time.5=05:00:00
+Time.6=06:00:00
+Time.7=07:00:00
+Time.8=08:00:00
+Time.9=09:00:00
+Time.10=10:00:00
+Time.11=11:00:00
+Time.12=12:00:00
+Time.13=13:00:00
+Time.14=14:00:00
+Time.15=15:00:00
+Time.16=16:00:00
+Time.17=17:00:00
+Time.18=18:00:00
+Time.19=19:00:00
+Time.20=20:00:00
+Time.21=21:00:00
+Time.22=22:00:00
+Time.23=23:00:00
+
+
+Time.Desc.0=12am
+Time.Desc.1=1am
+Time.Desc.2=2am
+Time.Desc.3=3am
+Time.Desc.4=4am
+Time.Desc.5=5am
+Time.Desc.6=6am
+Time.Desc.7=7am
+Time.Desc.8=8am
+Time.Desc.9=9am
+Time.Desc.10=10am
+Time.Desc.11=11am
+Time.Desc.12=12pm
+Time.Desc.13=1pm
+Time.Desc.14=2pm
+Time.Desc.15=3pm
+Time.Desc.16=4pm
+Time.Desc.17=5pm
+Time.Desc.18=6pm
+Time.Desc.19=7pm
+Time.Desc.20=8pm
+Time.Desc.21=9pm
+Time.Desc.22=10pm
+Time.Desc.23=11pm

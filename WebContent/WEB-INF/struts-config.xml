@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+        "http://struts.apache.org/dtds/struts-config_1_2.dtd"> 
+<!--
+	Default configuration file for examples application.
+	Each module also has its own struts-config under: /WEB-INF/$MODULE/
+	@version $Revision: 1.1 $ $Date: 2007/12/21 16:10:02 $
+-->
+<struts-config>
+	<form-beans>
+		<form-bean name="beanReport" type="reports.bean.BeanReport">
+		</form-bean> 
+		<form-bean name="beanDBTables" type="reports.bean.BeanDatabaseTable">
+		</form-bean>
+		<form-bean name="beanChart" type="reports.bean.BeanChartGraphic"> 
+		</form-bean>
+		<form-bean name="beanColumns" type="reports.bean.BeanColumns"> 
+		</form-bean>
+		<form-bean name="beanFields" type="reports.bean.BeanFields">
+		</form-bean> 
+		<form-bean name="beanGroupColumns" type="reports.bean.BeanGroupColumns">
+		</form-bean>
+		<form-bean name="beanGroups" type="reports.bean.BeanGroups">
+		</form-bean>
+		<form-bean name="beanParameters" type="reports.bean.BeanParameters">
+		</form-bean>
+		<form-bean name="beanSeriesColumns" type="reports.bean.BeanSeriesColumns">
+		</form-bean>
+		<form-bean name="beanVariables" type="reports.bean.BeanVariables">
+		</form-bean> 
+	</form-beans>
+
+	<global-forwards>
+		<forward name="welcome" path="/welcome.do" redirect="true" />
+	</global-forwards>
+	<action-mappings>
+		<action path="/beanReport" name="beanReport" scope="request" type="reports.actions.BeanReportAction">
+			<forward name="showDisplayList" path="report.displayList">
+			</forward>
+			<forward name="showFormInsert" path="report.insert">
+			</forward>
+			<forward name="showFormUpdate" path="report.update">
+			</forward>
+		</action>
+		<action path="/queryBuilder" forward="queryBuilder.display" name="beanReport" scope="request"> 
+		</action>
+		<action path="/beanVariables" type="reports.actions.BeanVariablesAction" name="beanVariables" scope="request">
+			<forward name="showDisplayList" path="variables.displayList">
+			</forward>
+			<forward name="showFormInsert" path="variables.insert">
+			</forward>
+			<forward name="showFormUpdate" path="variables.update">
+			</forward>
+		</action>
+		<action path="/reportPreview" type="reports.actions.ReportPreviewAction">
+			<forward name="showReportPreview" path="report.preview">
+			</forward>
+		</action>
+		<action path="/beanReportServer" type="reports.actions.BeanReportServerAction" name="beanReport" scope="request">
+			<forward name="showDisplayList" path="report.server.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="report.server.update">
+			</forward>
+		</action>
+		<action path="/beanParameters" type="reports.actions.BeanParametersAction" name="beanParameters" scope="request">
+			<forward name="showDisplayList" path="parameters.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="parameters.update">
+			</forward>
+			<forward name="showFormInsert" path="parameters.insert">
+			</forward>
+		</action>
+		<action path="/beanFields" type="reports.actions.BeanFieldsAction" name="beanFields" scope="request">
+			<forward name="showDisplayList" path="fields.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="fields.update">
+			</forward>
+			<forward name="showFormInsert" path="fields.insert"> 
+			</forward>
+		</action>
+		<action path="/beanColumns" type="reports.actions.BeanColumnsAction" name="beanColumns" scope="request">
+			<forward name="showDisplayList" path="columns.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="columns.update">
+			</forward>
+			<forward name="showFormInsert" path="columns.insert"> 
+			</forward>
+		</action>
+		<action path="/colorPicker" forward="report.colorPicker">
+		</action>
+		<action path="/beanReportColumns" type="reports.actions.BeanReportColumnsAction" name="beanColumns" scope="request">
+			<forward name="showDisplayList" path="titlecolumns.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="titlecolumns.update">
+			</forward>
+			<forward name="showFormInsert" path="titlecolumns.insert"> 
+			</forward>
+		</action>
+		<action path="/beanPageColumns" type="reports.actions.BeanPageColumnsAction" name="beanColumns" scope="request">
+			<forward name="showDisplayList" path="pagecolumns.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="pagecolumns.update">
+			</forward>
+			<forward name="showFormInsert" path="pagecolumns.insert"> 
+			</forward>
+		</action>
+		<action path="/beanSummaryColumns" type="reports.actions.BeanSummaryColumnsAction" name="beanColumns" scope="request">
+			<forward name="showDisplayList" path="summarycolumns.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="summarycolumns.update">
+			</forward>
+			<forward name="showFormInsert" path="summarycolumns.insert"> 
+			</forward>
+		</action>
+		<action path="/beanGroups" type="reports.actions.BeanGroupsAction" name="beanGroups" scope="request">
+			<forward name="showDisplayList" path="groups.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="groups.update">
+			</forward>
+			<forward name="showFormInsert" path="groups.insert"> 
+			</forward>
+		</action>
+		<action path="/beanGroupColumns" type="reports.actions.BeanGroupColumnsAction" name="beanGroupColumns" scope="request">
+			<forward name="showDisplayList" path="groupcolumns.displayList">
+			</forward>
+			<forward name="showFormUpdate" path="groupcolumns.update">
+			</forward>
+			<forward name="showFormInsert" path="groupcolumns.insert"> 
+			</forward>
+		</action>
+	</action-mappings>
+	<message-resources parameter="reports.resources.MessageResources">
+	</message-resources>
+	<plug-in className="org.apache.struts.tiles.TilesPlugin">
+		<set-property property="definitions-config" value="/WEB-INF/tiles-config.xml" />
+		<set-property property="moduleAware" value="true" />
+		<set-property property="definitions-parser-validate" value="true" />
+	</plug-in>
+
+</struts-config>
