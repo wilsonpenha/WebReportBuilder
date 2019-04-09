@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+#* 
+	Author      : Wilson Mendonça da Penha Junior
+	Company     : Hwork
+	Description : This a full Graphic Report template for Velocity build code for WebReportBuilder tool
+	Date of creation : 09/14/2005
+	Last modification: 09/14/2005
+*#
+
+#* 
+	Variables List thats been used on this entire file template;
+	
+	$width          	-
+	$format				-
+	$y					-
+	$x					-
+	$rows				-
+	$height				-
+	$reportWidth		-
+	$dif				-
+	$resetGroups		-
+	$incrementGroups	-
+	$backColor			-
+	$designer			-
+	$headerPos			-
+	$footerPos			-
+	$variableList		-
+	$parameterList		-
+	$sql				-
+	$fieldList			-
+	$groupList			-
+	$columnList			-
+	$title				-
+	$reportList			-
+	$pageList			-
+	$summaryList		-
+	$imageFile			-
+	$format				-
+	$orientation		-
+	$headerColumns		-
+	$footerColumns		-
+	$headerString		-
+	$footerString		-
+
+*#
+
+#* 
+	Initialization the jasperReport tag
+
+*#
+#set( $width = 0 )
+#foreach ($columns in $columnList)
+	#set( $width = $width + $columns.intWidth )
+#end
+#set( $reportWidth = $width + 20 )
+<jasperReport name="BasicReport" 
+			  #if ($format!="htmlNoBreaks")
+			  	  orientation="$orientation" 
+				  topMargin="30" 
+				  bottomMargin="30"
+			  #else
+				  topMargin="0" 
+				  bottomMargin="0"
+			  #end
+		      whenNoDataType="AllSectionsNoDetail" 
+			  #if($orientation=="Portrait")
+				  pageWidth="$reportWidth" 
+				  pageHeight="842"
+			  #else 
+				  pageWidth="$reportWidth"
+				  pageHeight="565" 
+			  #end
+			  columnWidth="$width" 
+			  leftMargin="10" 
+			  rightMargin="10"
+			  scriptletClass="reports.util.BarChartScriptlet">
+
+	<reportFont name="Arial_Normal" isDefault="true" fontName="Arial" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<reportFont name="Arial_Bold" isDefault="false" fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<reportFont name="Arial_Italic" isDefault="false" fontName="Arial" size="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Oblique" pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<parameter name="BaseDir" class="java.io.File"></parameter>
+	<parameter name="ImageFile" class="java.lang.String"></parameter>
+
+	#* 
+		Load all Parameters from the report definition repository, thess parameters is for query porpuse
+	
+	*#
+	#foreach ($parameters in $parameterList)
+		<parameter name="$parameters.parameterName" class="$parameters.classType">
+			<parameterDescription><![CDATA[$parameters.parameterDescription]]></parameterDescription>
+		</parameter>
+	#end
+
+	#* 
+		Load Quey from the report definition repository
+	
+	*#
+	<queryString>
+		<![CDATA[$sql]]>
+	</queryString>
+	
+	#* 
+		Load all Fields thats selected from the above and saved in the report definition repository
+	
+	*#
+	#foreach ($fields in $fieldList)
+		<field name="$fields.fieldName" class="$fields.classType"></field>
+	#end
+
+	#* 
+		Load Variables definition from the report definition repository
+	
+	*#
+
+	<variable name="Chart" class="net.sf.jasperreports.engine.JRRenderable" calculation="System">
+	</variable>
+	
+	#foreach ($variables in $variableList)
+		#set($variableAdded = true) 
+		#set($resetGroups = false) 
+		#set($incrementGroups = false) 
+		#set($resetGroups = $variables.resetGroups) 
+		#set($incrementGroups = $variables.incrementGroups) 
+		#if (($variables.resetType=="Group" || $variables.incrementType=="Group") && ($resetGroups || $incrementGroups))
+			#foreach ($groups in $groupList)
+				#if ($variableAdded && ($variables.resetGroups.groupName==$groups.groupName || $variables.incrementGroups.groupName==$groups.groupName))
+					#set($variableAdded = false) 
+					<variable name="$variables.variableName" class="$variables.classType" 
+						resetType="$variables.resetType"
+						incrementType="$variables.incrementType"
+						#if($resetGroups)
+							resetGroup="$variables.resetGroups.groupName"
+						#end
+						#if($incrementGroups)
+							incrementGroup="$variables.incrementGroups.groupName"
+						#end
+						calculation="$variables.calculation">
+						<variableExpression><![CDATA[$variables.variableExpression]]></variableExpression>
+					</variable>
+				#end
+			#end
+		#else
+			<variable name="$variables.variableName" class="$variables.classType" 
+				resetType="$variables.resetType"
+				incrementType="$variables.incrementType"
+				#set($resetGroups = false) 
+				#set($incrementGroups = false) 
+				#set($resetGroups = $variables.resetGroups) 
+				#set($incrementGroups = $variables.incrementGroups) 
+				#if($resetGroups)
+					resetGroup="$variables.resetGroups.groupName"
+				#end
+				#if($incrementGroups)
+					incrementGroup="$variables.incrementGroups.groupName"
+				#end
+				calculation="$variables.calculation">
+				<variableExpression><![CDATA[$variables.variableExpression]]></variableExpression>
+			</variable>
+		#end
+	#end
+
+	#* 
+		Load Groups, and Group Columns definition from the report definition repository
+	
+	*#
+	#foreach ($groups in $groupList)
+	<group  name="$groups.groupName" isStartNewColumn="false" isStartNewPage="false" isResetPageNumber="false" 
+		isReprintHeaderOnEachPage="false" 
+		minHeightToStartNewPage="0">
+		<groupExpression><![CDATA[$groups.groupExpression]]></groupExpression>
+		<groupHeader>
+		<band height="0"  isSplitAllowed="true" >
+		</band>
+		</groupHeader>
+		<groupFooter>
+		<band height="0"  isSplitAllowed="true" >
+		</band>
+		</groupFooter>
+	</group>
+	#end
+
+	#* 
+		Load Title and your Columns definition from the report definition repository
+	
+	*#
+	<title>
+		
+		  #if($orientation=="Portrait")
+			<band height="742">
+		  #else 
+			<band height="480">
+		  #end
+		
+			#set( $vchart = '$V{Chart}' )
+			<image scaleImage="Clip" vAlign="Top" hAlign="Center"  hyperlinkType="Reference">
+				<reportElement x="26" y="10" width="742" height="464"/>
+				<box topBorder="1Point" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+				<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
+				<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$vchart]]></imageExpression>
+				
+			</image>
+		</band>
+	</title>
+
+</jasperReport>
+
