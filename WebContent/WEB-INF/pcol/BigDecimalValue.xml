@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classe name="br.com.hwork.persistencia.BigDecimalValue" tablename="">
+  <attr>
+    <name>value</name>
+    <colname>VALOR</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>false</pk>
+    <getmethod>getValue</getmethod>
+    <setmethod>setValue</setmethod>
+  </attr>
+</classe>

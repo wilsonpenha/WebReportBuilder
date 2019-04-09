@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classe name="reports.JavaClass" tablename="JAVA_CLASS">
+  <attr>
+    <name>classType</name>
+    <colname>CLASS_TYPE</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>true</pk>
+    <getmethod>getClassType</getmethod>
+    <setmethod>setClassType</setmethod>
+  </attr>
+</classe>

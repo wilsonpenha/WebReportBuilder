@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context reloadable="true">
+	<Resource
+	  auth="Container"
+      name="jdbc/report_ds"
+      type="javax.sql.DataSource"
+      password="123"
+      driverClassName="com.mysql.jdbc.Driver"
+      maxIdle="20"
+      maxWait="60000"
+      username="root"
+      url="jdbc:mysql://192.168.0.2:3306/report?autoReconnectForPools"
+      maxActive="100"
+      factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"/>
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<WatchedResource>META-INF/context.xml</WatchedResource>
+	
+</Context>

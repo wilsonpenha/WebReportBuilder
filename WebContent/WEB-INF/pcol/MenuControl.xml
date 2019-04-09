@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classe name="reports.MenuControl" tablename="MENU_CONTROL">
+  <attr>
+    <name>menuControlId</name>
+    <colname>MENU_CONTROL_ID</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>true</pk>
+    <getmethod>getMenuControlId</getmethod>
+    <setmethod>setMenuControlId</setmethod>
+  </attr>
+  <attr>
+    <name>name</name>
+    <colname>NAME</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getName</getmethod>
+    <setmethod>setName</setmethod>
+  </attr>
+  <attr>
+    <name>description</name>
+    <colname>DESCRIPTION</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getDescription</getmethod>
+    <setmethod>setDescription</setmethod>
+  </attr>
+  <attr>
+    <name>active</name>
+    <colname>ACTIVE</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getActive</getmethod>
+    <setmethod>setActive</setmethod>
+  </attr>
+  <attr>
+    <name>url</name>
+    <colname>URL</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getUrl</getmethod>
+    <setmethod>setUrl</setmethod>
+  </attr>
+   <attr>
+    <name>category</name>
+    <colname>CATEGORY</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getCategory</getmethod>
+    <setmethod>setCategory</setmethod>
+  </attr>
+  
+  <method>
+    <name>findNotRelation</name> 
+    <statement value=" where menu_control_id > 0 AND menu_control_id not in (select menu_control_id from menu_privileges where role_id = ?)">
+      <param><sqltype>NUMERIC</sqltype></param>
+    </statement>
+  </method>
+  <method>
+    <name>findIdGreaterThanZero</name> 
+    <statement value=" where menu_control_id > 0">
+    </statement>
+  </method>
+</classe>

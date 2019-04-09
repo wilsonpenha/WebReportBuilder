@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classe name="reports.DatabaseTable" tablename="DATABASE_TABLE">
+  <attr>
+    <name>tableId</name>
+    <colname>TABLE_ID</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>true</pk>
+    <getmethod>getTableId</getmethod>
+    <setmethod>setTableId</setmethod>
+  </attr>
+  <attr>
+    <name>tableName</name>
+    <colname>TABLE_NAME</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getTableName</getmethod>
+    <setmethod>setTableName</setmethod>
+  </attr>
+  <attr>
+    <name>schemaName</name>
+    <colname>SCHEMA_NAME</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getSchemaName</getmethod>
+    <setmethod>setSchemaName</setmethod>
+  </attr>
+</classe>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classe name="reports.Fields" tablename="FIELDS">
+  <attr>
+    <name>fiedlsId</name>
+    <colname>FIEDLS_ID</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>true</pk>
+    <getmethod>getFiedlsId</getmethod>
+    <setmethod>setFiedlsId</setmethod>
+  </attr>
+  <attr>
+    <name>reportId</name>
+    <colname>REPORT_ID</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>false</pk>
+    <getmethod>getReportId</getmethod>
+    <setmethod>setReportId</setmethod>
+  </attr>
+  <attr>
+    <name>fieldName</name>
+    <colname>FIELD_NAME</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getFieldName</getmethod>
+    <setmethod>setFieldName</setmethod>
+  </attr>
+  <attr>
+    <name>fieldDescription</name>
+    <colname>FIELD_DESCRIPTION</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getFieldDescription</getmethod>
+    <setmethod>setFieldDescription</setmethod>
+  </attr>
+  <attr>
+    <name>classType</name>
+    <colname>CLASS_TYPE</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getClassType</getmethod>
+    <setmethod>setClassType</setmethod>
+  </attr>
+</classe>

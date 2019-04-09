@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classe name="br.com.hwork.persistencia.Sequence" tablename="SEQUENCE">
+  <attr>
+    <name>tableName</name>
+    <colname>TABLE_NAME</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getTableName</getmethod>
+    <setmethod>setTableName</setmethod>
+  </attr>
+  <attr>
+    <name>lastValue</name>
+    <colname>LAST_VALUE</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>false</pk>
+    <getmethod>getLastValue</getmethod>
+    <setmethod>setLastValue</setmethod>
+  </attr>
+</classe>

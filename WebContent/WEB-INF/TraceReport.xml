@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+
+
+
+
+
+<jasperReport name="BasicReport" orientation="Portrait"
+	topMargin="30" bottomMargin="30" whenNoDataType="AllSectionsNoDetail"
+	pageWidth="1050" pageHeight="842" columnWidth="1030" leftMargin="10"
+	rightMargin="10">
+	<reportFont name="SansSerif_Normal" isDefault="true"
+		fontName="SansSerif" size="12" isBold="false" isItalic="false"
+		isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica"
+		pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<reportFont name="SansSerif_Bold" isDefault="false"
+		fontName="SansSerif" size="12" isBold="true" isItalic="false"
+		isUnderline="false" isStrikeThrough="false"
+		pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252"
+		isPdfEmbedded="false" />
+	<reportFont name="SansSerif_Italic" isDefault="false"
+		fontName="SansSerif" size="12" isBold="false" isItalic="true"
+		isUnderline="false" isStrikeThrough="false"
+		pdfFontName="Helvetica-Oblique" pdfEncoding="Cp1252"
+		isPdfEmbedded="false" />
+	<parameter name="BaseDir" class="java.io.File"></parameter>
+	<parameter name="ImageFile" class="java.lang.String"></parameter>
+
+
+	<parameter name="archive_id" class="java.lang.String">
+		<parameterDescription><![CDATA[Select the Archive ID:]]></parameterDescription>
+	</parameter>
+
+
+	<queryString>
+		<![CDATA[SELECT COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME, MAX(MSG_MATCHED) AS MSG_MATCHED, MAX(MSG_FLAGGED) AS MSG_FLAGGED, MAX(MSG_REVIEWD) AS MSG_REVIEWED, MAX(MSG_ADDED_CONTAINER) AS MSG_CONTAINER FROM
+(SELECT C.COMPANY_NAME AS COMPANY, F.NAME AS FUNCTION, A.ARCHIVE_NAME AS ARCHIVE, CT.NAME AS CLASSIFICATION_TAG, CU.USER_NAME, CP.NAME AS PLATFORM, PM.EVENT_TYPE, PM.FLAG_TYPE, 
+    CASE WHEN PM.FLAG_TYPE='POLICYMATCHED' THEN COUNT(*) ELSE 0 END AS MSG_MATCHED,
+    CASE WHEN PM.FLAG_TYPE='FLAGGED' THEN COUNT(*)  ELSE 0 END AS MSG_FLAGGED,
+    CASE WHEN PM.FLAG_TYPE='REVIEWED' THEN COUNT(*)  ELSE 0 END AS MSG_REVIEWD, 
+    CASE WHEN PM.FLAG_TYPE='POLICYMATCHADDEDTOCONTAINER' THEN COUNT(*)  ELSE 0 END AS MSG_ADDED_CONTAINER
+FROM POLICY_MATCH PM 
+JOIN CLASSIFICATION_TAG CT ON CT.CLASSIFICATION_TAG_ID=PM.CLASSIFICATION_TAG_ID
+JOIN APPLIED_CLASSIFICATION_TAGS ACT ON ACT.CLASSIFICATION_TAG_ID=CT.CLASSIFICATION_TAG_ID
+JOIN COMPANY_USER CU ON CU.USER_ID=ACT.USER_ID
+JOIN POLICY P ON P.POLICY_ID=PM.POLICY_ID
+JOIN FUNCTION F ON F.FUNCTION_ID=PM.FUNCTION_ID
+JOIN MESSAGE_DELIVERED MD ON MD.ARCHIVE_ID=PM.ARCHIVE_ID AND MD.DESTINATION_MESSAGE_ID=PM.DESTINATION_MESSAGE_ID
+JOIN COMUNICATION_PLATFORM CP ON CP.PLATFORM_ID=MD.PLATFORM_ID
+JOIN ARCHIVE A ON A.ARCHIVE_ID=MD.ARCHIVE_ID
+JOIN COMPANY C ON C.COMPANY_ID=A.COMPANY_ID
+ WHERE PM.ARCHIVE_ID=$P{archive_id} AND 1=1 
+GROUP BY C.COMPANY_NAME, F.NAME, A.ARCHIVE_NAME, CT.NAME, CU.USER_NAME, CP.NAME, PM.EVENT_TYPE, PM.FLAG_TYPE) AS TBL
+GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
+]]>
+	</queryString>
+
+
+	<field name="company" class="java.lang.String"></field>
+	<field name="function" class="java.lang.String"></field>
+	<field name="archive" class="java.lang.String"></field>
+	<field name="classification_tag" class="java.lang.String"></field>
+	<field name="user_name" class="java.lang.String"></field>
+	<field name="msg_matched" class="java.lang.Long"></field>
+	<field name="msg_flagged" class="java.lang.Long"></field>
+	<field name="msg_reviewed" class="java.lang.Long"></field>
+	<field name="msg_container" class="java.lang.Long"></field>
+
+
+	<variable name="count_any_match" class="java.lang.Integer"
+		resetType="Group" incrementType="None" resetGroup="ClassificationTag"
+		calculation="Sum">
+		<variableExpression><![CDATA[ $F{msg_matched} ]]></variableExpression>
+	</variable>
+	<variable name="count_msg_flagged" class="java.lang.Integer"
+		resetType="Group" incrementType="None" resetGroup="ClassificationTag"
+		calculation="Sum">
+		<variableExpression><![CDATA[ $F{msg_flagged} ]]></variableExpression>
+	</variable>
+	<variable name="count_state_changed" class="java.lang.Integer"
+		resetType="Group" incrementType="None" resetGroup="ClassificationTag"
+		calculation="Sum">
+		<variableExpression><![CDATA[ $F{msg_reviewed} ]]></variableExpression>
+	</variable>
+
+
+	<group name="ClassificationTag" isStartNewColumn="false"
+		isStartNewPage="false" isResetPageNumber="false"
+		isReprintHeaderOnEachPage="true" minHeightToStartNewPage="0">
+		<groupExpression><![CDATA[ $F{classification_tag} ]]></groupExpression>
+		<groupHeader>
+			<band height="17" isSplitAllowed="true">
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<text><![CDATA[Department: ]]></text>
+				</staticText>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="100" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[ $F{classification_tag} ]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="250" y="0" width="780" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Left"
+						verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<text></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="16" width="1030" height="1"
+						forecolor="#ffffff" backcolor="#ffffff" />
+					<graphicElement />
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17" isSplitAllowed="true">
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<text><![CDATA[     TOTAL]]></text>
+				</staticText>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="100" y="0" width="50" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="150" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[ $V{count_any_match}.toString()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="300" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{count_msg_flagged}.toString()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="450" y="0" width="180" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{count_any_match}>0 ? Formatter.formatNumber(($V{count_msg_flagged}/(double)$V{count_any_match})*100,2) : "0.00"
+]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="630" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{count_msg_flagged}-$V{count_state_changed} ]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="780" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[ $V{count_state_changed}.toString()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="ClassificationTag">
+					<reportElement x="930" y="0" width="100" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{count_any_match}>0 ? Formatter.formatNumber(($V{count_state_changed}/(double)$V{count_any_match})*100,2) : "0.00"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="16" width="1030" height="1"
+						forecolor="#ffffff" backcolor="#ffffff" />
+					<graphicElement />
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+
+
+	<title>
+		<band height="187" isSplitAllowed="true">
+			<line direction="TopDown">
+				<reportElement x="0" y="0" width="1030" height="1"
+					key="line" />
+				<graphicElement stretchType="NoStretch" />
+			</line>
+			<image>
+				<reportElement x="0" y="1" width="350" height="56" />
+				<imageExpression><![CDATA["/data/workspace/WebReportBuilder/WebContent/jsp/common/images/gr-logo.png"]]>
+				</imageExpression>
+			</image>
+			<line direction="TopDown">
+				<reportElement x="0" y="57" width="1030" height="1"
+					key="line" />
+				<graphicElement stretchType="NoStretch" />
+			</line>
+			<staticText>
+				<reportElement x="0" y="58" width="1030" height="25"
+					mode="Opaque" forecolor="#000000" backcolor="#AFAFAF"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Center">
+					<font reportFont="SansSerif_Normal" size="20" />
+				</textElement>
+				<text><![CDATA[Proof of Supervision Report - MPP-dev]]></text>
+			</staticText>
+			<line direction="TopDown">
+				<reportElement x="0" y="84" width="1030" height="1"
+					key="line" />
+				<graphicElement stretchType="NoStretch" />
+			</line>
+
+			<staticText>
+				<reportElement x="0" y="84" width="100" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Customer Name:]]></text>
+			</staticText>
+			<textField pattern="" evaluationTime="Report">
+				<reportElement x="100" y="84" width="100" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company} ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="84" width="830" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="100" width="100" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Function:]]></text>
+			</staticText>
+			<textField pattern="" evaluationTime="Report">
+				<reportElement x="100" y="100" width="100" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[ $F{function} ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="100" width="830" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="116" width="100" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Archive]]></text>
+			</staticText>
+			<textField pattern="" evaluationTime="Report">
+				<reportElement x="100" y="116" width="100" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[ $F{archive} ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="116" width="830" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="132" width="150" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Processed by Global Relay on (UTC)]]></text>
+			</staticText>
+			<textField pattern="" evaluationTime="Report">
+				<reportElement x="150" y="132" width="150" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[Formatter.getCurrentDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="300" y="132" width="730" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="148" width="150" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Reporting period start date]]></text>
+			</staticText>
+			<textField pattern="" evaluationTime="Report">
+				<reportElement x="150" y="148" width="150" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["01-Jan-2018"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="300" y="148" width="730" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="164" width="150" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Reporting period end date]]></text>
+			</staticText>
+			<textField pattern="" evaluationTime="Report">
+				<reportElement x="150" y="164" width="150" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["31-Jan-2018"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="300" y="164" width="730" height="16"
+					mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" />
+				<textElement textAlignment="Left"
+					verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+						isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<text></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="180" width="1030" height="1" />
+				<graphicElement />
+			</line>
+		</band>
+	</title>
+
+
+	<pageHeader>
+		<band height="0" isSplitAllowed="true">
+		</band>
+	</pageHeader>
+
+
+	<columnHeader>
+		<band height="20" isSplitAllowed="true">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="5" width="150"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Left">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[User Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="150" y="5" width="150"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Right">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[Message match any policy]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="300" y="5" width="150"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Right">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[Message flaged for review]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="450" y="5" width="180"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Right">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[Message flaged for review %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="630" y="5" width="150"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Right">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[Messages in Flagged state]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="780" y="5" width="150"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Right">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[Messages in Reviewed state]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="930" y="5" width="100"
+					height="15" forecolor="#000000" backcolor="#979797"
+					key="staticText" />
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
+					leftBorderColor="#000000" rightBorder="None"
+					rightBorderColor="#000000" bottomBorder="None"
+					bottomBorderColor="#000000" />
+				<textElement textAlignment="Right">
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
+						isBold="true" />
+				</textElement>
+				<text><![CDATA[% Complete]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" isSplitAllowed="true">
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="0" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" />
+				<textFieldExpression class="java.lang.String">
+					<![CDATA["     "+ $F{user_name} ]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="0" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" />
+				<textFieldExpression class="java.lang.String">
+					<![CDATA["     "+ $F{user_name} ]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="150" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_matched} ]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="150" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_matched} ]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="300" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_flagged} ]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="300" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_flagged} ]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="450" y="0" width="180" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.String">
+					<![CDATA[$F{msg_matched}>0 ? Formatter.formatNumber(($F{msg_flagged}/(double)$F{msg_matched})*100,2) : "0.00"]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="450" y="0" width="180" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.String">
+					<![CDATA[$F{msg_matched}>0 ? Formatter.formatNumber(($F{msg_flagged}/(double)$F{msg_matched})*100,2) : "0.00"]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="630" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_flagged} - $F{msg_reviewed} ]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="630" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_flagged} - $F{msg_reviewed} ]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="780" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_reviewed} ]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="780" y="0" width="150" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Integer">
+					<![CDATA[ $F{msg_reviewed} ]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="930" y="0" width="100" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Double">
+					<![CDATA[$F{msg_matched}>0 ? Formatter.formatNumber(($F{msg_reviewed}/(double)$F{msg_matched})*100,2) : "0.00"]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="930" y="0" width="100" mode="Opaque"
+					height="15" forecolor="#000000" backcolor="#D7D7D7">
+					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.Double">
+					<![CDATA[$F{msg_matched}>0 ? Formatter.formatNumber(($F{msg_reviewed}/(double)$F{msg_matched})*100,2) : "0.00"]]>
+				</textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="15" width="1030" height="1"
+					forecolor="#ffffff" backcolor="#ffffff" />
+				<graphicElement />
+			</line>
+		</band>
+	</detail>
+
+
+
+	<pageFooter>
+		<band height="51" isSplitAllowed="true">
+			<textField pattern="dd-MMM-yyyy hh:mm aa">
+				<reportElement x="2" y="20" width="150" height="15" />
+				<textElement textAlignment="Left" />
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="830" y="20" width="150" height="15" />
+				<textElement textAlignment="Right" />
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + String.valueOf($V{PAGE_NUMBER}) + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="990" y="20" width="40" height="15" />
+				<textElement textAlignment="Left" />
+				<textFieldExpression class="java.lang.String"><![CDATA["" + String.valueOf($V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+
+
+	<summary>
+		<band height="2" isSplitAllowed="true">
+			<line direction="TopDown">
+				<reportElement x="0" y="0" width="1030" height="1"
+					key="line" />
+				<graphicElement stretchType="NoStretch" />
+			</line>
+			<line>
+				<reportElement x="0" y="1" width="1030" height="1" />
+				<graphicElement />
+			</line>
+		</band>
+	</summary>
+</jasperReport>
+
+

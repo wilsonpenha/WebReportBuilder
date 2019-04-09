@@ -1,0 +1,61 @@
+# NLS_MESSAGEFORMAT_NONE
+
+# Use it with Tomcat
+application.contextType=java:comp/env
+# Use it with Jboss
+#application.contextType=java:
+# Use it with Websphere
+#application.contextType=
+#Setting autoCommit
+autoCommitOff=true
+autoCommitOn=true
+
+#--buttons
+button.submit=Submit
+button.cancel=Cancel
+button.preview=Preview
+button.finish=Finish
+button.add=Add
+button.remove=Remove
+button.add.org=Add another organization &gt;&gt;
+button.upload.photo=Upload photo
+button.remove.photo=Remove photo
+button.go=GO
+button.ok=OK
+button.clear=Clear all
+my.profile=My profile
+bp.profile=BluePages profile
+
+#--user inputs
+####################################################################
+#user.ent.chars = {0} characters max ( {1} characters entered)
+# {0} = Maximum characters user can enter. e.g. 512,1024.
+# {1} = Input box displays total number of chars entered by user.
+# Eg. message : 512 characters max ( [500] characters entered)
+####################################################################
+user.ent.chars = {0} characters max ( {1} characters entered)
+
+#
+# JS ALERTS - can only be used in JS alerts since it has escape chars for double quotes
+#
+popup.confirm.AddToSTList={0} has been added to your Sametime list in a group named \"BluePages\".\n\nThis feature updates the list in the Sametime Connect client.  Please consult BluePages help documentation for information about other unsupported Sametime clients (e.g., NotesBuddy, ICT).
+popup.confirm.AddToSTNotAvailable=The Sametime server may be down. Please try again later.
+popup.confirm.DeleteFile1=Are you sure you want to delete this file?
+popup.confirm.DeleteFile2=Deleting a file associated with your profile is instant and permanent.
+popup.confirm.DeleteFile3=Your published profile will be updated to reflect the change.
+popup.confirm.DeleteFile4=Click OK to delete the file from your profile. To keep the file in your profile, click Cancel.
+
+#--Edit job &amp; contact info
+#############################################################################################
+#label.resume.uploaded=({0}k, {1}, uploaded {2})
+#{0} = Size of the file uploaded
+#{1} = Type of the file uploaded (Eg. MS word, text..etc)
+#{2} = File uploaded date.
+# Eg. 60k, MS Word, uploaded 19 April 2005.
+#############################################################################################
+label.resume.uploaded=({0}k, {1}, uploaded {2})
+
+label.editjobcont.text1=Use the field below to enter important contact information.
+label.editjobcont.text2=Please do NOT use this field to enter information that could be entered elsewhere on this page (e.g., mobile number, e-mail addresses, etc).
+label.important.contactinfo.eg=For example, "I work from my home office on Mon, Wed, Fri and can be reached via mobile number or Sametime." or "I am in the office Mon-Wed and do not work Thur-Fri. Please leave a voice message."
+

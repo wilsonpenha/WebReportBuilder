@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context reloadable="true">
+	<Resource
+	  auth="Container"
+      name="jdbc/report_ds"
+      type="javax.sql.DataSource"
+      password="master"
+      driverClassName="com.mysql.jdbc.Driver"
+      maxIdle="20"
+      maxWait="-1"
+      username="root"
+      url="jdbc:mysql://localhost:3306/report?autoReconnect=true&amp;autoReconnectForPools=true"
+      maxActive="100"
+      testOnBorrow="true"
+      testWhileIdle="true"
+      testOnReturn="true"
+      timeBetweenEvictionRunsMillis="60000"
+      minEvictableIdleTimeMillis="60000"
+      removeAbandoned="false"
+      validationQuery="SELECT 1;"
+      factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"/>
+	
+	<Resource
+	  auth="Container"
+      name="jdbc/mpp_ds"
+      type="javax.sql.DataSource"
+      password="master2019"
+      driverClassName="org.postgresql.Driver"
+      maxIdle="20"
+      maxWait="-1"
+      username="postgres"
+      testWhileIdle="true"
+      testOnReturn="true"
+      timeBetweenEvictionRunsMillis="60000"
+      minEvictableIdleTimeMillis="60000"
+      removeAbandoned="false"
+      validationQuery="SELECT 1;"
+      url="jdbc:postgresql://hadoopflex1-sin-salsnap1-nvan.dev-globalrelay.net:5432/ers"
+      maxActive="100"
+      factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"/>
+	
+	<Resource
+	  maxActive="-1"
+      maxIdle="-1"
+      minIdle="10"
+      initialSize="10"
+      maxWait="-1"	  
+      auth="Container"
+      name="jdbc/sal_ds"
+      type="javax.sql.DataSource"
+      password="admin"
+      driverClassName="org.apache.hive.jdbc.HiveDriver"
+      username="admin"
+      url="jdbc:hive2://hadoopmaster1-sin-salsnap1-nvan.dev-globalrelay.net:10000/default;user=admin;password=admin;auth=noSasl"
+      testWhileIdle="true"
+      testOnReturn="true"
+      timeBetweenEvictionRunsMillis="60000"
+      minEvictableIdleTimeMillis="60000"
+      removeAbandoned="false"
+      validationQuery="SELECT 1;"
+      factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"/>
+
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<WatchedResource>META-INF/context.xml</WatchedResource>
+	
+</Context>

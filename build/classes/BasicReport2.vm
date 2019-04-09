@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+#* 
+	Author      : Wilson Mendonça da Penha Junior
+	Company     : Hwork
+	Description :This a full Report template for Velocity build code for WebReportBuilder tool
+	Date of creation : 06/16/2005
+	Last modification: 09/14/2005
+*#
+
+#* 
+	Variables List thats been used on this entire file template;
+	
+	$width          	-
+	$format				-
+	$y					-
+	$x					-
+	$rows				-
+	$height				-
+	$reportWidth		-
+	$dif				-
+	$resetGroups		-
+	$incrementGroups	-
+	$backColor			-
+	$designer			-
+	$headerPos			-
+	$footerPos			-
+	$variableList		-
+	$parameterList		-
+	$sql				-
+	$fieldList			-
+	$groupList			-
+	$columnList			-
+	$title				-
+	$reportList			-
+	$pageList			-
+	$summaryList		-
+	$imageFile			-
+	$format				-
+	$orientation		-
+	$headerColumns		-
+	$footerColumns		-
+	$headerString		-
+	$footerString		-
+
+*#
+
+#* 
+	Initialization the jasperReport tag
+
+*#
+#set( $width = 0 )
+#foreach ($columns in $columnList)
+	#set( $width = $width + $columns.intWidth )
+#end
+#set( $reportWidth = $width + 20 )
+<jasperReport name="BasicReport" 
+			  #if ($format!="htmlNoBreaks")
+			  	  orientation="$orientation" 
+				  topMargin="30" 
+				  bottomMargin="30"
+			  #else
+				  topMargin="0" 
+				  bottomMargin="0"
+			  #end
+		      whenNoDataType="AllSectionsNoDetail" 
+			  #if($orientation=="Portrait")
+				  pageWidth="$reportWidth" 
+				  pageHeight="842"
+			  #else 
+				  pageWidth="$reportWidth"
+				  pageHeight="565" 
+			  #end
+			  columnWidth="$width" 
+			  leftMargin="10" 
+			  rightMargin="10">
+	<reportFont name="SansSerif_Normal" isDefault="true" fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<reportFont name="SansSerif_Bold" isDefault="false" fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<reportFont name="SansSerif_Italic" isDefault="false" fontName="SansSerif" size="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Oblique" pdfEncoding="Cp1252" isPdfEmbedded="false" />
+	<parameter name="BaseDir" class="java.io.File"></parameter>
+	<parameter name="ImageFile" class="java.lang.String"></parameter>
+
+	#* 
+		Load all Parameters from the report definition repository, thess parameters is for query porpuse
+	
+	*#
+	#foreach ($parameters in $parameterList)
+		<parameter name="$parameters.parameterName" class="$parameters.classType">
+			<parameterDescription><![CDATA[$parameters.parameterDescription]]></parameterDescription>
+		</parameter>
+	#end
+
+	#* 
+		Load Quey from the report definition repository
+	
+	*#
+	<queryString>
+		<![CDATA[$sql]]>
+	</queryString>
+	
+	#* 
+		Load all Fields thats selected from the above and saved in the report definition repository
+	
+	*#
+	#foreach ($fields in $fieldList)
+		<field name="$fields.fieldName" class="$fields.classType"></field>
+	#end
+
+	#* 
+		Load Variables definition from the report definition repository
+	
+	*#
+	#foreach ($variables in $variableList)
+		#set($variableAdded = true) 
+		#set($resetGroups = false) 
+		#set($incrementGroups = false) 
+		#set($resetGroups = $variables.resetGroups) 
+		#set($incrementGroups = $variables.incrementGroups) 
+		#if (($variables.resetType=="Group" || $variables.incrementType=="Group") && ($resetGroups || $incrementGroups))
+			#foreach ($groups in $groupList)
+				#if ($variableAdded && ($variables.resetGroups.groupName==$groups.groupName || $variables.incrementGroups.groupName==$groups.groupName))
+					#set($variableAdded = false) 
+					<variable name="$variables.variableName" class="$variables.classType" 
+						resetType="$variables.resetType"
+						incrementType="$variables.incrementType"
+						#if($resetGroups)
+							resetGroup="$variables.resetGroups.groupName"
+						#end
+						#if($incrementGroups)
+							incrementGroup="$variables.incrementGroups.groupName"
+						#end
+						calculation="$variables.calculation">
+						<variableExpression><![CDATA[$variables.variableExpression]]></variableExpression>
+					</variable>
+				#end
+			#end
+		#else
+			<variable name="$variables.variableName" class="$variables.classType" 
+				resetType="$variables.resetType"
+				incrementType="$variables.incrementType"
+				#set($resetGroups = false) 
+				#set($incrementGroups = false) 
+				#set($resetGroups = $variables.resetGroups) 
+				#set($incrementGroups = $variables.incrementGroups) 
+				#if($resetGroups)
+					resetGroup="$variables.resetGroups.groupName"
+				#end
+				#if($incrementGroups)
+					incrementGroup="$variables.incrementGroups.groupName"
+				#end
+				calculation="$variables.calculation">
+				<variableExpression><![CDATA[$variables.variableExpression]]></variableExpression>
+			</variable>
+		#end
+	#end
+
+	#* 
+		Load Groups, and Group Columns definition from the report definition repository
+	
+	*#
+	#foreach ($groups in $groupList)
+	<group  name="$groups.groupName" isStartNewColumn="false" isStartNewPage="false" isResetPageNumber="false" 
+		#if ($format=="htmlNoBreaks")
+			isReprintHeaderOnEachPage="false" 
+		#else
+			isReprintHeaderOnEachPage="$groups.isReprintHeaderOnNewPage" 
+		#end
+		minHeightToStartNewPage="0" >
+		<groupExpression><![CDATA[$groups.groupExpression]]></groupExpression>
+		#set( $height = 0 )
+		#set( $rows = 0 )
+		#set( $dif = 0 )
+		#if ($format=="htmlNoBreaks")
+			#set( $dif = 1 )
+		#end
+		#foreach ($headerColumn in $headerColumns)
+			#if ($headerColumn.groupsId==$groups.groupsId)
+				#set( $rows = $rows + 1 )
+			#end
+		#end
+		#set($backColor = "#FFFFFF")
+	    #if ($rows>0)
+			#set( $height = (17-$dif) )
+		#end
+		#if ($designer=="true")
+			#if ($groups.headerColumns.size()>0)
+				#set( $height = 17 )
+			#end
+		#end
+		#set( $x = 0 )
+		#set( $y = 0 )
+		#set( $beginBlank = 0 )
+		#set( $blankWidth = 0 )
+		#set( $printBlank = 0 )
+		#set( $oldPosition = 0 )
+		<groupHeader>
+		<band height="$height"  isSplitAllowed="true" >
+		#if ($designer=="true")
+			#foreach ($headerColumn in $groups.headerColumns)
+				#set( $xx = 0 )
+				#foreach ($columns in $columnList)
+					#if($columns.order==$headerColumn.order)
+						#set( $x = $xx )
+					#end
+					#set( $xx = $xx + $columns.intWidth )
+				#end
+				#if($oldPosition<$x)
+					#if($x>0)
+						#set( $blankWidth = $x - $oldPosition )
+						<staticText>
+							<reportElement x="$oldPosition" y="$y" width="$blankWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+							<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+								<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+							</textElement>
+						<text></text>
+						</staticText>
+					#end
+				#end
+				#if($headerColumn.isPrintHeader=="Yes")
+					<staticText>
+						<reportElement x="$x" y="$y" width="$headerColumn.intLabelWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+						<textElement textAlignment="$headerColumn.alignment">
+							<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						</textElement>
+					<text><![CDATA[$headerColumn.description]]></text>
+					</staticText>
+					#set( $x = $x + $headerColumn.intLabelWidth )
+				#end
+				<textField pattern=""  evaluationTime="Group" evaluationGroup="$groups.groupName">
+					<reportElement x="$x" y="$y" width="$headerColumn.intWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+					<textElement textAlignment="$headerColumn.alignment">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="$headerColumn.classType"><![CDATA[$headerColumn.fieldExpression]]></textFieldExpression>
+				</textField>
+				#set( $oldPosition = $x + $headerColumn.intWidth)
+				#set( $x = $x + $headerColumn.intWidth )
+			#end
+		#else
+			#foreach ($headerColumn in $headerColumns)
+				#if ($headerColumn.groupsId==$groups.groupsId)
+					#set( $xx = 0 )
+			        #if ($headerPos=="Horizontal")
+						#foreach ($columns in $columnList)
+							#if($columns.order==$headerColumn.order)
+								#set( $x = $xx )
+							#end
+							#set( $xx = $xx + $columns.intWidth )
+						#end
+					#end
+					#if($oldPosition<$x)
+						#if($x>0)
+							#set( $blankWidth = $x - $oldPosition )
+							<staticText>
+								<reportElement x="$oldPosition" y="$y" width="$blankWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+								<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+									<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+								</textElement>
+							<text></text>
+							</staticText>
+						#end
+					#end
+					#if($headerColumn.isPrintHeader=="Yes")
+						<staticText>
+							<reportElement x="$x" y="$y" width="$headerColumn.intLabelWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+							<textElement textAlignment="$headerColumn.alignment">
+								<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+							</textElement>
+						<text><![CDATA[$headerColumn.description]]></text>
+						</staticText>
+						#set( $x = $x + $headerColumn.intLabelWidth )
+					#end
+					<textField pattern=""  evaluationTime="Group" evaluationGroup="$groups.groupName">
+						<reportElement x="$x" y="$y" width="$headerColumn.intWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+						<textElement textAlignment="$headerColumn.alignment">
+							<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						</textElement>
+					<textFieldExpression   class="$headerColumn.classType"><![CDATA[$headerColumn.fieldExpression]]></textFieldExpression>
+					</textField>
+					#set( $oldPosition = $x + $headerColumn.intWidth)
+					#set( $x = $x + $headerColumn.intWidth )
+				#end
+			#end
+		#end
+        #if ($oldPosition < $width && $oldPosition > 0)
+			#set( $fillWidth = $width - $oldPosition )
+			#if ($fillWidth < 0)
+			    #set( $fillWidth = 0 )
+			#end
+			<staticText>
+				<reportElement x="$oldPosition" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text></text>
+			</staticText>
+		#end
+		#set( $y = $y + 16 )
+		#if ($format!="htmlNoBreaks" && $height > 0)
+			<line>
+				<reportElement x="0" y="$y" width="$width" height="1" forecolor="#ffffff" backcolor="#ffffff"/>
+				<graphicElement />
+			</line>
+		#end
+		</band>
+		</groupHeader>
+		#set( $height = 0 )
+		#set( $rows = 0 )
+		#foreach ($footerColumn in $footerColumns)
+			#if ($footerColumn.groupsId==$groups.groupsId)
+				#set( $rows = $rows + 1 )
+			#end
+		#end
+        #if ($footerPos=="Vertical")
+			#set( $height = $rows * 17 )
+			#set($backColor = "#BBBBBB")
+		#else
+			#set($backColor = "#FFFFFF")
+		    #if ($rows>0)
+				#set( $height = (17-$dif) )
+			#end
+		#end
+		#if ($designer=="true")
+			#if ($groups.footerColumns.size()>0)
+				#set( $height = 17 )
+			#end
+		#end
+		#set( $x = 0 )
+		#set( $y = 0 )
+		#set( $beginBlank = 0 )
+		#set( $blankWidth = 0 )
+		#set( $printBlank = 0 )
+		#set( $oldPosition = 0 )
+		<groupFooter>
+		<band height="$height"  isSplitAllowed="true" >
+		#if ($designer=="true")
+			#foreach ($footerColumn in $groups.footerColumns)
+				#set( $xx = 0 )
+				#foreach ($columns in $columnList)
+					#if($columns.order==$footerColumn.order)
+						#set( $x = $xx )
+					#end
+					#set( $xx = $xx + $columns.intWidth )
+				#end
+		        #if ($footerPos=="Horizontal")
+					#if($oldPosition<$x)
+						#if($x>0)
+							#set( $blankWidth = $x - $oldPosition )
+							<staticText>
+								<reportElement x="$oldPosition" y="$y" width="$blankWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+								<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+									<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+								</textElement>
+							<text></text>
+							</staticText>
+						#end
+					#end
+				#end
+				#if($footerColumn.isPrintHeader=="Yes")
+					<staticText>
+						<reportElement x="$x" y="$y" width="$footerColumn.intLabelWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+						<textElement textAlignment="$footerColumn.alignment">
+							<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						</textElement>
+					<text><![CDATA[$footerColumn.description]]></text>
+					</staticText>
+					#set( $x = $x + $footerColumn.intLabelWidth )
+				#end
+				<textField pattern=""  evaluationTime="Group" evaluationGroup="$groups.groupName">
+					<reportElement x="$x" y="$y" width="$footerColumn.intWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+					<textElement textAlignment="$footerColumn.alignment">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="$footerColumn.classType"><![CDATA[$footerColumn.fieldExpression]]></textFieldExpression>
+				</textField>
+				#set( $oldPosition = $x + $footerColumn.intWidth)
+		        #if ($footerPos=="Vertical")
+					#set( $x = $x + $footerColumn.intWidth )
+					#set( $fillWidth = $width - $x )
+					#if ($fillWidth < 0)
+					    #set( $fillWidth = 0 )
+					#end
+					<staticText>
+						<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+						<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+							<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						</textElement>
+					<text></text>
+					</staticText>
+				#end
+		        #if ($footerPos=="Vertical")
+					#set( $y = $y + 16 )
+					#set( $x = 0 )
+				#else
+					#set( $x = $x + $footerColumn.intWidth )
+				#end
+			#end
+		#else
+			#foreach ($footerColumn in $footerColumns)
+				#if ($footerColumn.groupsId==$groups.groupsId)
+					#set( $xx = 0 )
+			        #if ($footerPos=="Horizontal")
+						#foreach ($columns in $columnList)
+							#if($columns.order==$footerColumn.order)
+								#set( $x = $xx )
+							#end
+							#set( $xx = $xx + $columns.intWidth )
+						#end
+					#end
+			        #if ($footerPos=="Horizontal")
+						#if($oldPosition<$x)
+							#if($x>0)
+								#set( $blankWidth = $x - $oldPosition )
+								<staticText>
+									<reportElement x="$oldPosition" y="$y" width="$blankWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+									<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+										<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+									</textElement>
+								<text></text>
+								</staticText>
+							#end
+						#end
+					#end
+					#if($footerColumn.isPrintHeader=="Yes")
+						<staticText>
+							<reportElement x="$x" y="$y" width="$footerColumn.intLabelWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+							<textElement textAlignment="$footerColumn.alignment">
+								<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+							</textElement>
+						<text><![CDATA[$footerColumn.description]]></text>
+						</staticText>
+						#set( $x = $x + $footerColumn.intLabelWidth )
+					#end
+					<textField pattern=""  evaluationTime="Group" evaluationGroup="$groups.groupName">
+						<reportElement x="$x" y="$y" width="$footerColumn.intWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+						<textElement textAlignment="$footerColumn.alignment">
+							<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						</textElement>
+					<textFieldExpression   class="$footerColumn.classType"><![CDATA[$footerColumn.fieldExpression]]></textFieldExpression>
+					</textField>
+					#set( $oldPosition = $x + $footerColumn.intWidth)
+			        #if ($footerPos=="Vertical")
+						#set( $x = $x + $footerColumn.intWidth )
+						#set( $fillWidth = $width - $x )
+						#if ($fillWidth < 0)
+						    #set( $fillWidth = 0 )
+						#end
+						<staticText>
+							<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+							<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+								<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+							</textElement>
+						<text></text>
+						</staticText>
+					#end
+			        #if ($footerPos=="Vertical")
+						#set( $y = $y + 16 )
+						#set( $x = 0 )
+					#else
+						#set( $x = $x + $footerColumn.intWidth )
+					#end
+				#end
+			#end
+		#end
+        #if ($footerPos=="Horizontal")
+	        #if ($oldPosition < $width && $oldPosition > 0)
+				#set( $fillWidth = $width - $oldPosition )
+				#if ($fillWidth < 0)
+				    #set( $fillWidth = 0 )
+				#end
+				<staticText>
+					<reportElement x="$oldPosition" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="$groups.fgColor" backcolor="$groups.bgColor"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text></text>
+				</staticText>
+			#end
+			#set( $y = $y + 16 )
+		#end
+		#if ($format!="htmlNoBreaks" && $height > 0)
+			<line>
+				<reportElement x="0" y="$y" width="$width" height="1" forecolor="#ffffff" backcolor="#ffffff"/>
+				<graphicElement />
+			</line>
+		#end
+		</band>
+		</groupFooter>
+	</group>
+	#end
+
+	#* 
+		Load Title and your Columns definition from the report definition repository
+	
+	*#
+	<title>
+		#set( $height = 29 + 56)
+	    #if ($headerPos=="Vertical")
+			#set( $height = $height + ($reportList.size()*17) )
+		#else
+			#set( $height = $height + 17 )
+		#end
+		#if ($designer=="true")
+		#end
+		#if ($title=="")
+			#set( $height = $height - 29 )
+		#end
+		#if ($format=="htmlNoBreaks")
+			#set( $height = $height + 15 )
+		#end
+		<band height="$height" isSplitAllowed="true">
+		#if ($format!="htmlNoBreaks")
+			<line direction="TopDown">
+				<reportElement x="0" y="0" width="$width" height="1" key="line"/>
+				<graphicElement stretchType="NoStretch"/>
+			</line>
+		#end
+		<image>
+  			<reportElement x="0" y="1" width="350" height="56"/>
+  			<imageExpression><![CDATA["/data/workspace/WebReportBuilder/WebContent/jsp/common/images/gr-logo.png"]]>
+            </imageExpression>
+        </image>
+		#if ($format!="htmlNoBreaks")
+			<line direction="TopDown">
+				<reportElement x="0" y="57" width="$width" height="1" key="line"/>
+				<graphicElement stretchType="NoStretch"/>
+			</line>
+		#end
+		#if ($title!="")
+			<staticText>
+				<reportElement x="0" y="58" width="$width" height="25"  mode="Opaque" forecolor="$titleFgColor" backcolor="$titleBgColor" key="staticText"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<textElement textAlignment="Center">
+					<font reportFont="SansSerif_Normal" size="20" />
+				</textElement>
+				<text><![CDATA[$title]]></text>
+			</staticText>
+			#if ($format!="htmlNoBreaks")
+				<line direction="TopDown">
+					<reportElement x="0" y="84" width="$width" height="1" key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			#end
+			#set( $y = 27 + 57)
+		#else
+			#set( $y = 1 + 57 )
+		#end
+
+		#set( $x = 0 )
+		#foreach ($columns in $reportList)
+			<staticText>
+				<reportElement x="$x" y="$y" width="$columns.intLabelWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text><![CDATA[$columns.columnName]]></text>
+			</staticText>
+			#set( $x = $x + $columns.intLabelWidth )
+			<textField pattern=""  evaluationTime="Report">
+				<reportElement x="$x" y="$y" width="$columns.intWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="$columns.classType"><![CDATA[$columns.columnExpression]]></textFieldExpression>
+			</textField>
+	        #if ($headerPos=="Vertical")
+				#set( $x = $x + $columns.intWidth )
+				#set( $fillWidth = $width - $x )
+				#if ($fillWidth < 0)
+				    #set( $fillWidth = 0 )
+				#end
+				<staticText>
+					<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text></text>
+				</staticText>
+			#end
+	        #if ($headerPos=="Vertical")
+				#set( $y = $y + 16 )
+				#set( $x = 0 )
+			#else
+				#set( $x = $x + $columns.intWidth )
+			#end
+		#end
+        #if ($headerPos=="Horizontal")
+			#set( $fillWidth = $width - $x )
+			#if ($fillWidth < 0)
+			    #set( $fillWidth = 0 )
+			#end
+			<staticText>
+				<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text></text>
+			</staticText>
+		#end
+        #if ($headerPos=="Horizontal")
+			#set( $y = $y + 16 )
+		#end
+		#if ($format!="htmlNoBreaks")
+			<line>
+				<reportElement x="0" y="$y" width="$width" height="1"/>
+				<graphicElement />
+			</line>
+		#end
+		#if ($format=="htmlNoBreaks")
+			#foreach ($columns in $columnList)
+				<staticText>
+					<reportElement mode="Opaque" x="$x" y="$y" width="$columns.intWidth" height="15" forecolor="$detailHeadFgColor" backcolor="$detailHeadBgColor" />
+					<textElement textAlignment="Left">
+						<font reportFont="SansSerif_Bold" />
+					</textElement>
+					<text><![CDATA[$columns.columnName]]></text>
+				</staticText>
+				#set( $x = $x + $columns.intWidth )
+			#end
+		#end
+		</band>
+	</title>
+
+	#* 
+		Load Page and your Columns definition from the report definition repository
+	
+	*#
+	#if ($format!="htmlNoBreaks")
+	<pageHeader>
+		#set( $height = 0 )
+	    #if ($headerPos=="Vertical")
+			#set( $height = $pageList.size()*17 )
+		#elseif ($pageList.size()>0)
+			#set( $height = 17 )
+		#end
+		#if ($designer=="true")
+		#end
+		#set( $x = 0 )
+		#set( $y = 0 )
+		<band height="$height" isSplitAllowed="true">
+		#set( $x = 0 )
+		#foreach ($columns in $pageList)
+			<staticText>
+				<reportElement x="$x" y="$y" width="$columns.intLabelWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#A3C5E7"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text><![CDATA[$columns.columnName]]></text>
+			</staticText>
+			#set( $x = $x + $columns.intLabelWidth )
+			<textField pattern=""  evaluationTime="Page">
+				<reportElement x="$x" y="$y" width="$columns.intWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#A3C5E7"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="$columns.classType"><![CDATA[$columns.columnExpression]]></textFieldExpression>
+			</textField>
+	        #if ($headerPos=="Vertical")
+				#set( $x = $x + $columns.intWidth )
+				#set( $fillWidth = $width - $x )
+				#if ($fillWidth < 0)
+				    #set( $fillWidth = 0 )
+				#end
+				<staticText>
+					<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#A3C5E7"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text></text>
+				</staticText>
+			#end
+	        #if ($headerPos=="Vertical")
+				#set( $y = $y + 16 )
+				#set( $x = 0 )
+			#else
+				#set( $x = $x + $columns.intWidth )
+			#end
+		#end
+        #if ($headerPos=="Horizontal" && $pageList.size()>0)
+			#set( $fillWidth = $width - $x )
+			#if ($fillWidth < 0)
+			    #set( $fillWidth = 0 )
+			#end
+			<staticText>
+				<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#A3C5E7"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text></text>
+			</staticText>
+		#end
+        #if ($headerPos=="Horizontal")
+			#set( $y = $y + 16 )
+		#end
+		#if ($format!="htmlNoBreaks" && $pageList.size()>0)
+			<line>
+				<reportElement x="0" y="$y" width="$width" height="1" forecolor="#ffffff" backcolor="#000000"/>
+				<graphicElement />
+			</line>
+		#end
+		</band>
+	</pageHeader>
+	#end
+	
+	#* 
+		Load Columns definition from the report definition repository
+	
+	*#
+	#if ($format!="htmlNoBreaks")
+		<columnHeader>
+			<band height="20" isSplitAllowed="true">
+			#set( $x = 0 )
+			#foreach ($columns in $columnList)
+				<staticText>
+				<reportElement 
+					mode="Opaque" 
+					x="$x" 
+					y="5" 
+					width="$columns.intWidth" 
+					height="15" 
+					forecolor="$detailHeadFgColor" 
+					backcolor="$detailHeadBgColor" 
+					key="staticText"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<textElement textAlignment="$columns.alignment"> 
+					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica" isBold="true"/>
+				</textElement>
+				<text><![CDATA[$columns.columnName]]></text>
+				</staticText>
+				#set( $x = $x + $columns.intWidth )
+			#end
+			</band>
+		</columnHeader>
+	#end
+	<detail>
+		#if ($format=="htmlNoBreaks")
+			<band height="15" isSplitAllowed="true">
+		#else
+			<band height="16" isSplitAllowed="true">
+		#end
+		#set( $colorOff = 'new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)' )
+		#set( $colorOn  = 'new Boolean($V{REPORT_COUNT}.intValue() % 2 != 0)' )
+		#set( $x = 0 )
+		#foreach ($columns in $columnList)
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="$x" y="0" width="$columns.intWidth" mode="Opaque" height="15" forecolor="#000000" backcolor="$detailColorOff">
+					<printWhenExpression><![CDATA[$colorOff]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="$columns.alignment" />
+				<textFieldExpression class="$columns.classType">
+					<![CDATA[$columns.columnExpression]]>
+				</textFieldExpression>
+			</textField>
+			<textField pattern="" evaluationTime="Now">
+				<reportElement x="$x" y="0" width="$columns.intWidth" mode="Opaque" height="15" forecolor="#000000" backcolor="$detailColorOn">
+					<printWhenExpression><![CDATA[$colorOn]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="$columns.alignment" />
+				<textFieldExpression class="$columns.classType">
+					<![CDATA[$columns.columnExpression]]>
+				</textFieldExpression>
+			</textField>
+			#if ($format!="htmlNoBreaks")
+				<line>
+					<reportElement x="0" y="15" width="$width" height="1" forecolor="#ffffff" backcolor="#ffffff"/>
+					<graphicElement />
+				</line>
+			#end
+			#set( $x = $x + $columns.intWidth )
+		#end
+		</band>
+	</detail>
+	
+	#* 
+		Load Page and your Columns definition from the report definition repository
+	
+	*#
+	#set( $pageNumber = '$V{PAGE_NUMBER}' )
+	#set( $x1 = $width - 200 )
+	#set( $x2 = $width - 40 )
+	
+	#if ($format!="htmlNoBreaks")
+	<pageFooter>
+		<band height="51"  isSplitAllowed="true" >
+			<textField pattern="dd-MMM-yyyy hh:mm aa">
+				<reportElement x="2" y="20" width="150" height="15" />
+				<textElement textAlignment="Left" />
+			<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="$x1" y="20" width="150" height="15" />
+				<textElement textAlignment="Right" />
+			<textFieldExpression   class="java.lang.String"><![CDATA["Page " + String.valueOf($pageNumber) + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="$x2" y="20" width="40" height="15" />
+				<textElement textAlignment="Left" />
+			<textFieldExpression   class="java.lang.String"><![CDATA["" + String.valueOf($pageNumber)]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	#end
+
+	#* 
+		Load Summary and your Columns definition from the report definition repository
+	
+	*#
+	<summary>
+		#set( $height = 29 )
+	    #if ($headerPos=="Vertical")
+			#set( $height = $height + ($summaryList.size()*17) )
+		#else
+			#set( $height = $height + 17 )
+		#end
+		#if ($designer=="true")
+		#end
+		#if ($footerString=="")
+			#set( $height = $height - 27 )
+		#end
+		<band height="$height" isSplitAllowed="true">
+		#if ($format!="htmlNoBreaks")
+			<line direction="TopDown">
+				<reportElement x="0" y="0" width="$width" height="1" key="line"/>
+				<graphicElement stretchType="NoStretch"/>
+			</line>
+		#end
+		#if ($footerString!="")
+			<staticText>
+				<reportElement x="0" y="2" width="$width" height="25" key="staticText"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<textElement textAlignment="Center">
+					<font reportFont="SansSerif_Normal" size="20" />
+				</textElement>
+				<text><![CDATA[$footerString]]></text>
+			</staticText>
+			#if ($format!="htmlNoBreaks")
+				<line direction="TopDown">
+					<reportElement x="0" y="28" width="$width" height="1" key="staticText"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			#end
+			#set( $y = 29 )
+		#else
+			#set( $y = 1 )
+		#end
+		#set( $x = 0 )
+		#foreach ($columns in $summaryList)
+			<staticText>
+				<reportElement x="$x" y="$y" width="$columns.intLabelWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" key="staticText"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text><![CDATA[$columns.columnName]]></text>
+			</staticText>
+			#set( $x = $x + $columns.intLabelWidth )
+			<textField pattern=""  evaluationTime="Report">
+				<reportElement x="$x" y="$y" width="$columns.intWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2" key="staticText"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="$columns.classType"><![CDATA[$columns.columnExpression]]></textFieldExpression>
+			</textField>
+	        #if ($headerPos=="Vertical")
+				#set( $x = $x + $columns.intWidth )
+				#set( $fillWidth = $width - $x )
+				#if ($fillWidth < 0)
+				    #set( $fillWidth = 0 )
+				#end
+				<staticText>
+					<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text></text>
+				</staticText>
+			#end
+	        #if ($headerPos=="Vertical")
+				#set( $y = $y + 16 )
+				#set( $x = 0 )
+			#else
+				#set( $x = $x + $columns.intWidth )
+			#end
+		#end
+        #if ($headerPos=="Horizontal")
+			#set( $fillWidth = $width - $x )
+			#if ($fillWidth < 0)
+			    #set( $fillWidth = 0 )
+			#end
+			<staticText>
+				<reportElement x="$x" y="$y" width="$fillWidth" height="16" mode="Opaque" forecolor="#000000" backcolor="#F7F4F2"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+			<text></text>
+			</staticText>
+		#end
+        #if ($headerPos=="Horizontal")
+			#set( $y = $y + 16 )
+		#end
+		#if ($format!="htmlNoBreaks")
+			<line>
+				<reportElement x="0" y="$y" width="$width" height="1"/>
+				<graphicElement />
+			</line>
+		#end
+		</band>
+	</summary>
+</jasperReport>
+

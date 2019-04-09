@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classe name="reports.SeriesColumns" tablename="SERIES_COLUMNS">
+  <attr>
+    <name>seriesColumnsId</name>
+    <colname>SERIES_COLUMNS_ID</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>true</pk>
+    <getmethod>getSeriesColumnsId</getmethod>
+    <setmethod>setSeriesColumnsId</setmethod>
+  </attr>
+  <attr>
+    <name>chartGraphicId</name>
+    <colname>CHART_GRAPHIC_ID</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>false</pk>
+    <getmethod>getChartGraphicId</getmethod>
+    <setmethod>setChartGraphicId</setmethod>
+  </attr>
+  <attr>
+    <name>columnName</name>
+    <colname>COLUMN_NAME</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getColumnName</getmethod>
+    <setmethod>setColumnName</setmethod>
+  </attr>
+  <attr>
+    <name>columnType</name>
+    <colname>COLUMN_TYPE</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getColumnType</getmethod>
+    <setmethod>setColumnType</setmethod>
+  </attr>
+  <attr>
+    <name>order</name>
+    <colname>ORDER_POSITION</colname>
+    <javatype>java.math.BigDecimal</javatype>
+    <sqltype>NUMERIC</sqltype>
+    <pk>false</pk>
+    <getmethod>getOrder</getmethod>
+    <setmethod>setOrder</setmethod>
+  </attr>
+</classe>
