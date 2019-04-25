@@ -143,7 +143,7 @@ public class BarChartScriptlet extends JRDefaultScriptlet
 		CategoryItemRenderer categoryitemrenderer = categoryplot.getRenderer();   
 		categoryitemrenderer.setItemLabelsVisible(true);
 		BarRenderer barrenderer = (BarRenderer)categoryitemrenderer;
-		barrenderer.setMaxBarWidth(0.050000000000000003D);
+		barrenderer.setMaximumBarWidth(0.050000000000000003D);
 
 		barrenderer.setItemLabelGenerator(new LabelGenerator());
 		barrenderer.setItemLabelsVisible(true);

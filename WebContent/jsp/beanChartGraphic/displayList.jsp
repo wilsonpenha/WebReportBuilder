@@ -1,17 +1,36 @@
+<%@ page import="br.com.hwork.servlet.PropertiesManager" %>
 <%@ page import = "reports.bean.BeanObject, br.com.hwork.text.Formatter, java.util.Vector"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib prefix="hwork" uri='/WEB-INF/tld/hwork.tld'%>
 
-<jsp:useBean id="beanPage" scope="request" class="reports.bean.BeanChartGraphic"/>
+<script language="javascript" src="<%=request.getContextPath()%>/jsp/beanChartGraphic/script.js"></script>
+
+<% 
+	reports.bean.BeanChartGraphic beanPage = (reports.bean.BeanChartGraphic)request.getAttribute("beanChartGraphic");
+%>
+
+<script language="JavaScript"> mensagemErro('<%= beanPage.getMessage()%>');</script>
 
 <body topmargin="0" leftmargin="0" bottommargin="0" rightmargin="0">
-<form method="post" onSubmit="return ConfirmaSubmit(this,'<%=beanPage.getBeanForm()%>')">
+<form method="post" action="<%=request.getContextPath()%>/beanChartGraphic.do" onSubmit="return ConfirmaSubmit(this,'<%=beanPage.getBeanForm()%>')">
 <input type="hidden" name="dbAction">
+<input type="hidden" name="reportId" value="<%=beanPage.getReportId()%>">
 <input type="hidden" name="formAction" value="<%=beanPage.getDbAction()%>">
 <input type="hidden" name="blockNumber" value="<%=beanPage.getBlockNumber()%>">
 <input type="hidden" name="blockSize" value="<%=beanPage.getBlockSize()%>">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr> 
-    <td height="30" class="topTitleCenter"><%=beanPage.getPObject().getClass().getName().substring(4)%> - List</td>
+    <td height="30" class="topTitleCenter">Chart Graphic - List</td>
+  </tr>
+  <tr> 
+    <td>
+	  <div id="tabGuia" style="width:100%; height:20px; z-index:1; overflow: hidden" >
+		<% String tabName = PropertiesManager.getString("app.tab.chartGraphic",request); %>
+	     <jsp:include flush="true" page='<%="../tabSheets1.jsp?tabSheetOn=" + tabName%>'/>
+	  </div>
+    </td>
   </tr>
         <tr>
           <td>
@@ -21,9 +40,9 @@
                 <td class="CabecalhoCampo">
                 <%
                   String[] ids = {"chartGraphicId"};
-                  String[] objValues = {"chartName", "reportId", "chartType", "chartSubtype"};
-                  String[] titles = {"", "chartName", "Report Id", "Chart Type", "Chart SubType"};
-                  String[] colsWidth = {"1%", "25%", "25%", "25%", "25%"};
+                  String[] objValues = {"chartName", "chartType", "chartSubtype"};
+                  String[] titles = {"", "chartName", "Chart Type", "Chart SubType"};
+                  String[] colsWidth = {"1%", "33%", "33%", "33%"};
                 %>
                 <hwork:TableCheckHRef name="objIds" ids="<%=ids%>"
              	objs="<%=beanPage.getList()%>"
@@ -42,10 +61,22 @@
 	    <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tituloPrinCenter">
             <tr>
-              <td height="16" width="50%" <% if (!beanPage.isFirstBlock()) {%> class="tdPrevious"><input type="button" value="Previous" name="btnAnterior" class="btnList" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_PRIOR%>');document.forms[0].submit();"><%} else {%>>&nbsp;<%}%></td>
-              <td width="50%" <% if (!beanPage.isLastBlock()) {%> class="tdNext"><input type="button" value="Next" name="btnProximo" class="btnList" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_NEXT%>');document.forms[0].submit();"><%} else {%>>&nbsp;<%}%></td>
+              <td height="16" width="50%" <% if (!beanPage.isFirstBlock()) {%> class="tdPrevious"><input type="button" value="<bean:message key="app.button.previous"/>" name="btnAnterior" class="btnList" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_PRIOR%>');document.forms[0].submit();"><%} else {%>>&nbsp;<%}%></td>
+              <td width="50%" <% if (!beanPage.isLastBlock()) {%> class="tdNext"><input type="button" value="<bean:message key="app.button.next"/>" name="btnProximo" class="btnList" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_NEXT%>');document.forms[0].submit();"><%} else {%>>&nbsp;<%}%></td>
             </tr>
           </table>
           </td>
 	  </tr>
-
+	<tr>
+	  <td align="center">
+		<table border="0" cellPadding="0" cellSpacing="4">
+		  <tr>
+			<td><input type="submit" value=" <bean:message key="app.button.add"/> "      style="width: 38px;" name="btnNew" class="stdButton" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_FORM_INSERT%>');" onMouseOver="javascript:mensagem('<bean:message key="app.button.add.msg"/>');"></td>
+			<td><input type="submit" value=" <bean:message key="app.button.delete"/> "   style="width: 51px;" name="btnDelete"     <% if (beanPage.isEmpty()) {%> disabled class="stdButtonDisabled"  <%} else { %> class="stdButton" <%}%> onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_DELETE%>');" onMouseOver="javascript:mensagem('<bean:message key="app.button.delete.msg"/>');"></td>
+		  </tr>
+		</table>
+	  </td>
+	</tr>
+</table>
+</form>
+</body>

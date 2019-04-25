@@ -2,7 +2,6 @@ package reports.util;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,15 +53,19 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
+import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
+import net.sf.jasperreports.export.SimpleHtmlReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
+import net.sf.jasperreports.j2ee.servlets.ImageServlet;
+import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
+import reports.ChartGraphic;
 import reports.Columns;
 import reports.Fields;
 import reports.GroupColumns;
@@ -201,7 +204,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 				addDataToContext(context, req, resp);
 	
 				// Get template
-				Template template = Velocity.getTemplate("BasicReport2.vm"); 
+				Template template = Velocity.getTemplate("BasicReport3.vm"); 
 				jasperReport = compileTemplate(template, context, req, resp);
 	
 				parameters = new HashMap();    
@@ -244,7 +247,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 //				JasperExportManager.exportReportToPdfFile(jasperPrint, "/home/wilson.penha/Downloads/report.pdf"); 
 				byte[] bytes = JasperRunManager.runReportToPdf(jasperReport, parameters, getConnection());
 				resp.setContentType("application/pdf");
-				resp.setHeader("Content-Disposition", "inline; filename=report.pdf");
+				resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".pdf");
 				ServletOutputStream outputStream = resp.getOutputStream();
 				resp.setContentLength(bytes.length);
 				outputStream = resp.getOutputStream();
@@ -259,26 +262,10 @@ public class ReportServlet extends HttpServlet implements Servlet {
 				**************************************************************/
 				if (format.equals(TASK_HTML)) {
 	
-					ServletOutputStream outputStream; 
-					outputStream = resp.getOutputStream();
+					HtmlExporter html_exporter = new HtmlExporter();
 
-					//JspWriter out =
-					//	((PageContext) JspFactory
-					//		.getDefaultFactory()
-					//		.getPageContext(this, req, resp, "jsp/common/errorpge.jsp", true, 8192, true))
-					//		.getOut();
-	
-					outputStream.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\r\n");
-					outputStream.println("<html>\r\n");
-					outputStream.println("<head>\r\n");
-					outputStream.println("\r\n");
-					outputStream.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\r\n");
-					outputStream.println("<meta http-equiv=\"Expires\" content=\"-1\">\r\n");
-					outputStream.println("<meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n");
-					outputStream.println("<meta http-equiv=\"Cache-Control\" content=\"no-cache\">\r\n");
-	
-					exporter = new JRHtmlExporter();
-	
+					session.setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
+					
 					int pageIndex = 0;
 					int lastPageIndex = 0;
 					if (jasperPrint.getPages() != null) {
@@ -299,27 +286,53 @@ public class ReportServlet extends HttpServlet implements Servlet {
 					if (pageIndex > lastPageIndex) {
 						pageIndex = lastPageIndex;
 					}
-	
+
 					StringBuffer sbuffer = new StringBuffer();
+
+					html_exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+					
+					SimpleHtmlExporterOutput htmloutput = new SimpleHtmlExporterOutput(sbuffer);
+					htmloutput.setImageHandler(new WebHtmlResourceHandler("image?image={0}"));
+					html_exporter.setExporterOutput(htmloutput);
+					
+					SimpleHtmlReportConfiguration reportConfig = new SimpleHtmlReportConfiguration();
+					reportConfig.setPageIndex(pageIndex);
+					html_exporter.setConfiguration(reportConfig);
+					
+					SimpleHtmlExporterConfiguration exporterConfig = new SimpleHtmlExporterConfiguration();
+					exporterConfig.setHtmlHeader("");
+					exporterConfig.setBetweenPagesHtml("");
+					exporterConfig.setHtmlFooter("");
+					html_exporter.setConfiguration(exporterConfig);
+					
+					html_exporter.exportReport();
+					
+					ServletOutputStream outputStream; 
+					outputStream = resp.getOutputStream();
+
+					//JspWriter out =
+					//	((PageContext) JspFactory
+					//		.getDefaultFactory()
+					//		.getPageContext(this, req, resp, "jsp/common/errorpge.jsp", true, 8192, true))
+					//		.getOut();
+	
+					outputStream.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\r\n");
+					outputStream.println("<html>\r\n");
+					outputStream.println("<head>\r\n");
+					outputStream.println("\r\n");
+					outputStream.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\r\n");
+					outputStream.println("<meta http-equiv=\"Expires\" content=\"-1\">\r\n");
+					outputStream.println("<meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n");
+					outputStream.println("<meta http-equiv=\"Cache-Control\" content=\"no-cache\">\r\n");
 	
 					Map imagesMap = new HashMap();
 					req.getSession().setAttribute("IMAGES_MAP", imagesMap);
 	
-					resp.setHeader("Content-Disposition", "inline; filename=report.html"); 
+					resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".html"); 
 	
-					exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-					//exporter.setParameter(JRExporterParameter.OUTPUT_STRING_BUFFER, sbuffer);
-//					exporter.setParameter(JRHtmlExporterParameter.IMAGES_DIR, "jsp/common/images");
-					exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, imagesMap);
-					exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, "image?image=");
-					exporter.setParameter(JRExporterParameter.PAGE_INDEX, new Integer(pageIndex));
-					exporter.setParameter(JRHtmlExporterParameter.HTML_HEADER, "");
-					exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
-					exporter.setParameter(JRHtmlExporterParameter.HTML_FOOTER, "");
-	
-					if (!jasperPrint.getPages().isEmpty()){
-						output = exportReportToBytes(jasperPrint, exporter);
-					}
+//					if (!jasperPrint.getPages().isEmpty()){
+//						output = exportReportToBytes(jasperPrint, exporter);
+//					}
 	
 					//exporter.exportReport();
 	
@@ -415,7 +428,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 					outputStream.println("\r\n");
 						
 					if (!jasperPrint.getPages().isEmpty())
-						outputStream.write(output);
+						outputStream.println(sbuffer.toString());
 					else{
 						outputStream.println("<span style='color: red; font-size: 12pt'> No records found for this criteria!</span><br><br><input type='button' name='Close' value='Close' style=\"color: \" onclick=\"javascript:window.close();\">");
 					}
@@ -441,14 +454,19 @@ public class ReportServlet extends HttpServlet implements Servlet {
 					**********************************************************/
 				} else if (format.equals(TASK_XLS)) {
 					resp.setContentType("application/vnd.ms-excel");
-					resp.setHeader("Content-Disposition", "inline; filename=report.xls");
-					JRXlsExporter exporterXls = new JRXlsExporter();
+					resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName() + ".xlsx");
+					JRXlsxExporter exporterXls = new JRXlsxExporter();
 					
+					Map<String, String> dateFormats = new HashMap<String, String>();
+					dateFormats.put("EEE, MMM d, yyyy", "ddd, mmm d, yyyy");
+
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					exporterXls.setExporterInput(new SimpleExporterInput(jasperPrint));
 					exporterXls.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
-					SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
+					SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
 					configuration.setOnePagePerSheet(true);
+					configuration.setDetectCellType(true);
+					configuration.setFormatPatternsMap(dateFormats);
 					exporterXls.setConfiguration(configuration);
 					
 					exporterXls.exportReport();
@@ -476,7 +494,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 					**********************************************************/
 				} else if (format.equals(TASK_CSV)) {
 					resp.setContentType("text/vnd.ms-excel");
-					resp.setHeader("Content-Disposition", "inline; filename=report.csv");
+					resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".csv");
 					exporter = new JRCsvExporter();
 					/*********************************************************** 
 					* Processing to generate the XML format content type is 
@@ -484,7 +502,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 					**********************************************************/
 				} else if (format.equals(TASK_XML)) {  
 					resp.setContentType("text/xml");
-					resp.setHeader("Content-Disposition", "inline; filename=report.xml");
+					resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".xml");
 					exporter = new JRXmlExporter(); 
 				}
 				if (!format.equals(TASK_HTML) && !format.equals(TASK_XLS) && !format.equals(TASK_PDF)) { 
@@ -502,7 +520,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 						ServletOutputStream outputStream;
 						outputStream = resp.getOutputStream();
 						resp.setContentType("text/html");
-						resp.setHeader("Content-Disposition", "inline; filename=report.html");
+						resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".html");
 						outputStream.println("<center><span style='color: steelblue; font-size: 12pt'>Report Server System</span><br><br><span style='color: red; font-size: 12pt'> No records found for this criteria!</span><br><br><input type='button' name='Close' value='Close' style=\"color: \" onclick=\"javascript:window.close();\"></center>");
 						outputStream.flush();
 						outputStream.close();
@@ -575,6 +593,8 @@ public class ReportServlet extends HttpServlet implements Servlet {
 		String[] sPageColumns = req.getParameterValues("pageIds");
 		String[] sDetailColumns = req.getParameterValues("detailIds");
 		String[] sSummaryColumns = req.getParameterValues("summaryIds");
+		String[] sCharts = req.getParameterValues("chartGraphicIds");
+		String isGraphic = req.getParameter("isGraphic");
 		
 		StringBuffer strWhere = new StringBuffer(this.report.getSql());
 		
@@ -587,6 +607,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 		Vector vColumnList = new Vector();
 		Vector vFooterColumns = new Vector();
 		Vector vHeaderColumns = new Vector();
+		Vector vcharts = ChartGraphic.findByReport(this.report);
 		
 		String clause = "";
 		
@@ -597,7 +618,11 @@ public class ReportServlet extends HttpServlet implements Servlet {
 				throw new Exception("Malformaded <WHERE>...</WHERE> tag.");
 			}
 			if (startWhere>0 && paramName.length>0){
-				strWhere = strWhere.replace(startWhere, endWhere+8, " WHERE 1=1 ");
+				while (startWhere >=0) {
+					strWhere = strWhere.replace(startWhere, endWhere+8, " WHERE 1=1 ");
+					startWhere = strWhere.indexOf("<WHERE>");
+					endWhere = strWhere.indexOf("</WHERE>");
+				}
 			}else {
 				strWhere = new StringBuffer(this.report.getSql().replaceAll("(?i)where"," WHERE "));
 			}
@@ -758,6 +783,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 		List footerColumns = new ArrayList(vFooterColumns);       
 		List variableList = new ArrayList(vVariables);
 		List parameterList = new ArrayList(vParams);     
+		List chartGraphicList = new ArrayList(vcharts);     
   
 		// add title, fields, columns, sql query, header string to 
 		// VelocityContext
@@ -794,6 +820,8 @@ public class ReportServlet extends HttpServlet implements Servlet {
 		context.put("footerColumns", footerColumns);
 		context.put("variableList", variableList);  
 		context.put("parameterList", parameterList);
+		context.put("chartGraphicList", chartGraphicList);
+		context.put("isGraphic", isGraphic);
 		Report rpt = new Report(); 
 		String sqlStmt = PCol.getConvertedStatement(strWhere.toString(),DBManager.getInstance());
 		context.put("sql", sqlStmt);
@@ -884,19 +912,26 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, JRException {
 
-		Map imagesMap = new HashMap();
-		req.getSession().setAttribute("IMAGES_MAP", imagesMap); 
-		JRHtmlExporter exporter = new JRHtmlExporter();
+		HtmlExporter html_exporter = new HtmlExporter();
 
-		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-		exporter.setParameter(JRExporterParameter.OUTPUT_WRITER, resp.getWriter());
-		exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
-		exporter.setParameter(JRHtmlExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-		exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, imagesMap);
-		exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
-				"image?image=");
+		session.setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
+		
+		StringBuffer sbuffer = new StringBuffer();
 
-		exporter.exportReport();       
+		html_exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+		
+		SimpleHtmlExporterOutput htmloutput = new SimpleHtmlExporterOutput(sbuffer);
+		htmloutput.setImageHandler(new WebHtmlResourceHandler("image?image={0}"));
+		html_exporter.setExporterOutput(htmloutput);
+		
+		html_exporter.exportReport();
+		
+		ServletOutputStream outputStream; 
+		outputStream = resp.getOutputStream();
+
+		outputStream.println(sbuffer.toString());
+		outputStream.flush();
+		outputStream.close();
 	}
 
 	private Connection getConnection() {

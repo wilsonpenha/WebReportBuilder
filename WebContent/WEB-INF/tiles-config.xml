@@ -141,4 +141,14 @@
 	<definition name="groupcolumns.update" extends="body.template.definition">
 		<put name="content-main" value="/jsp/beanGroupColumns/update.jsp" />
 	</definition>
+	<!-- Tiles Definition for ChartGraphic Form -->
+	<definition name="chartGraphic.displayList" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanChartGraphic/displayList.jsp" />
+	</definition>
+	<definition name="chartGraphic.insert" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanChartGraphic/insert.jsp" />
+	</definition>
+	<definition name="chartGraphic.update" extends="body.template.definition">
+		<put name="content-main" value="/jsp/beanChartGraphic/update.jsp" />
+	</definition>
 </tiles-definitions>

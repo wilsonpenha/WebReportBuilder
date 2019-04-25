@@ -13,7 +13,7 @@
 		</form-bean> 
 		<form-bean name="beanDBTables" type="reports.bean.BeanDatabaseTable">
 		</form-bean>
-		<form-bean name="beanChart" type="reports.bean.BeanChartGraphic"> 
+		<form-bean name="beanChartGraphic" type="reports.bean.BeanChartGraphic"> 
 		</form-bean>
 		<form-bean name="beanColumns" type="reports.bean.BeanColumns"> 
 		</form-bean>
@@ -127,6 +127,14 @@
 			<forward name="showFormUpdate" path="groupcolumns.update">
 			</forward>
 			<forward name="showFormInsert" path="groupcolumns.insert"> 
+			</forward>
+		</action>
+		<action path="/beanChartGraphic" name="beanChartGraphic" scope="request" type="reports.actions.BeanChartGraphicAction">
+			<forward name="showDisplayList" path="chartGraphic.displayList">
+			</forward>
+			<forward name="showFormInsert" path="chartGraphic.insert">
+			</forward>
+			<forward name="showFormUpdate" path="chartGraphic.update">
 			</forward>
 		</action>
 	</action-mappings>

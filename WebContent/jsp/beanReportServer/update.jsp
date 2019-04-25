@@ -42,7 +42,7 @@
               </td>
             </tr>
             </form>
-			<form method="post" action="<%=request.getContextPath()%>/factory.do" name="reportForm" target="winReport">
+			<form method="post" action="<%=request.getContextPath()%>/factory.do" name="reportForm" target="winReport" onSubmit="return checkReportParams(this);">
 			<input type="hidden" name="dbAction">
             <input type="hidden" name="reportId" value="<%=beanPage.getReportId()%>">
             <input type="hidden" name="reload" value="true">
@@ -59,6 +59,7 @@
 			<% if (beanPage.getParametersInput().equals("")){%>
 	            <input type="hidden" name="paramName">
     	        <input type="hidden" name="paramValue">
+    	        <input type="hidden" name="validation">
 			<%}%>	
 			<%=beanPage.getParametersInput()%>            
 
@@ -174,6 +175,8 @@
                 <input type="radio" name="format"  value="pdf" tabIndex="14" > PDF
                 <input type="radio" name="format"  value="csv" tabIndex="14" > CSV 
                 <input type="radio" name="format"  value="xls" tabIndex="14" > XLS 
+                <input type="hidden" name="isGraphic" id="isGraphic">
+                <input type="checkbox" name="graphic" id="graphic" tabIndex="20" onClick="document.getElementById('isGraphic').value=document.getElementById('graphic').checked" > <bean:message key="tabReports.label.chartGraphic"/> 
                </td>
             </tr>
           </table>
@@ -217,16 +220,16 @@
 			}
 			if (allUnChecked){
 				alert('You must have to provide one DETAIL COLUMN!');
-				obj.checked=true;
+				obj.checked=true; 
 			}
-		}
+		} 
 	</script>
 		<tr>
 		  <td align="center">
 			<table border="0" cellPadding="0" cellSpacing="4">
 			  <tr>
 				<td><input type="button" value=" Cancel "  style="width: 67px;" name="btnReturn" class="stdButton" onClick="javascript:setAction(document.forms[0],'<%=BeanObject.ACTION_SELECT_LIST%>');document.forms[0].submit();" onMouseOver="javascript:mensagem('Click here to back to list.');"></td>
-				<td><input type="button" value=" Run "     style="width: 38px;" name="btnNew" class="stdButton" onClick="javascript:setAction(document.forms[1],'<%=BeanObject.ACTION_SELECT_LIST%>');document.forms[1].submit();" onMouseOver="javascript:mensagem('Click here to run this Report.');"></td>
+				<td><input type="button" value=" Run "     style="width: 38px;" name="btnNew" class="stdButton" onClick="javascript:if (checkReportParams(document.forms[1])){setAction(document.forms[1],'<%=BeanObject.ACTION_SELECT_LIST%>');document.forms[1].submit();}" onMouseOver="javascript:mensagem('Click here to run this Report.');"></td>
 			  </tr>
 			</table>
 		  </td>

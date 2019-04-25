@@ -16,7 +16,7 @@ ArrOperacaoCampo = [OP_INSERT_UPDATE, OP_INSERT_UPDATE, OP_INSERT_UPDATE];
 
 function buildReport(url){
 	frmLOV = window.open(url ,
-	      "winReport", "left=0,top=0,scrollbars=yes,resizable=yes,width=800,height=600");
+	      "winReport", "left=0,top=0,scrollbars=yes,resizable=yes,width=1280,height=1024");
 	frmLOV.focus();
 	if (frmLOV.opener == null) {
 	   frmLOV.opener = self;

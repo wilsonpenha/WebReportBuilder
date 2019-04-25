@@ -33,16 +33,13 @@
 <%request.getSession().removeAttribute("JASPER_PRINT");%>
 
 <body topmargin="0" leftmargin="0" bottommargin="0" rightmargin="0">
-<% if (request.getParameter("graphic").equals("true")) {%>
-	<form method="post" action="<%=request.getContextPath()%>/graphic.do">
-<% }else{%>
-	<form method="post" action="<%=request.getContextPath()%>/factory.do">
-<% } %>
+<form method="post" action="<%=request.getContextPath()%>/factory.do">
 
 <input type="hidden" name="dbAction">
 <input type="hidden" name="reportId" value="<%=request.getParameter("reportId")%>">
 <input type="hidden" name="reload" value="<%=request.getParameter("reload")%>">
 <input type="hidden" name="format" value="<%=request.getParameter("format")%>">
+<input type="hidden" name="isGraphic" value="<%=request.getParameter("isGraphic")%>">
 <input type="hidden" name="designer" value="true">
 <input type="hidden" name="headerOrientation" value="Vertical">
 <input type="hidden" name="footerOrientation" value="Horizontal">

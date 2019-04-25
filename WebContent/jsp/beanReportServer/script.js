@@ -22,16 +22,30 @@ function confirmReport(form){
 
 function checkReportParams(form){
   count = 0
-  for (var i=0; i < form.paramName.length; i++) {
-    pos = form.validation[i].value.lastIndexOf('|');
-    count = count + parseInt(form.validation[i].value.substring(pos+1));
-    if (form.validation[i].value.indexOf('Yes')>=0 && form.validation[i].value.indexOf('text')>=0){
-    	alert('The parameter name <'+form.paramLabel[i].value+'>, must to be provided!');
-    	form.paramValue[count-1].focus();
-    	return false;
-    }
-  }
-  return true;
+  
+	for (var i=0; i < form.paramName.length; i++) {
+	    pos = form.validation[i].value.lastIndexOf('|');
+	    count = count + parseInt(form.validation[i].value.substring(pos+1));
+	    if (form.validation[i].value.indexOf('Yes')>=0 && form.validation[i].value.indexOf('text')>=0){
+	    	if (form.paramValue[count-1].value.trim().length==0){
+	        	alert('The parameter name <'+form.paramLabel[i].value+'>, must to be provided!');
+	        	form.paramValue[count-1].focus();
+	        	return false;
+	    	}
+	    }
+	}
+	if (!form.paramName.length && form.paramName){
+		pos = form.validation.value.lastIndexOf('|');
+		count = count + parseInt(form.validation.value.substring(pos+1));
+		if (form.validation.value.indexOf('Yes')>=0 && form.validation.value.indexOf('text')>=0){
+			if (form.paramValue.value.trim().length==0){
+		    	alert('The parameter name <'+form.paramLabel.value+'>, must to be provided!');
+		    	form.paramValue.focus();
+		    	return false;
+			}
+		}
+	}
+    return true;
 /*    if (campo.type == "select-one" || campo.type == "select-multiple" || campo.type == "button")
       campo.disabled = false;
     else if (campo.type == "radio") {

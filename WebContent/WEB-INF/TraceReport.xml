@@ -34,34 +34,53 @@
 
 
 	<queryString>
-		<![CDATA[SELECT COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME, MAX(MSG_MATCHED) AS MSG_MATCHED, MAX(MSG_FLAGGED) AS MSG_FLAGGED, MAX(MSG_REVIEWD) AS MSG_REVIEWED, MAX(MSG_ADDED_CONTAINER) AS MSG_CONTAINER FROM
-(SELECT C.COMPANY_NAME AS COMPANY, F.NAME AS FUNCTION, A.ARCHIVE_NAME AS ARCHIVE, CT.NAME AS CLASSIFICATION_TAG, CU.USER_NAME, CP.NAME AS PLATFORM, PM.EVENT_TYPE, PM.FLAG_TYPE, 
-    CASE WHEN PM.FLAG_TYPE='POLICYMATCHED' THEN COUNT(*) ELSE 0 END AS MSG_MATCHED,
-    CASE WHEN PM.FLAG_TYPE='FLAGGED' THEN COUNT(*)  ELSE 0 END AS MSG_FLAGGED,
-    CASE WHEN PM.FLAG_TYPE='REVIEWED' THEN COUNT(*)  ELSE 0 END AS MSG_REVIEWD, 
-    CASE WHEN PM.FLAG_TYPE='POLICYMATCHADDEDTOCONTAINER' THEN COUNT(*)  ELSE 0 END AS MSG_ADDED_CONTAINER
-FROM POLICY_MATCH PM 
-JOIN CLASSIFICATION_TAG CT ON CT.CLASSIFICATION_TAG_ID=PM.CLASSIFICATION_TAG_ID
-JOIN APPLIED_CLASSIFICATION_TAGS ACT ON ACT.CLASSIFICATION_TAG_ID=CT.CLASSIFICATION_TAG_ID
-JOIN COMPANY_USER CU ON CU.USER_ID=ACT.USER_ID
-JOIN POLICY P ON P.POLICY_ID=PM.POLICY_ID
-JOIN FUNCTION F ON F.FUNCTION_ID=PM.FUNCTION_ID
-JOIN MESSAGE_DELIVERED MD ON MD.ARCHIVE_ID=PM.ARCHIVE_ID AND MD.DESTINATION_MESSAGE_ID=PM.DESTINATION_MESSAGE_ID
-JOIN COMUNICATION_PLATFORM CP ON CP.PLATFORM_ID=MD.PLATFORM_ID
-JOIN ARCHIVE A ON A.ARCHIVE_ID=MD.ARCHIVE_ID
-JOIN COMPANY C ON C.COMPANY_ID=A.COMPANY_ID
- WHERE PM.ARCHIVE_ID=$P{archive_id} AND 1=1 
-GROUP BY C.COMPANY_NAME, F.NAME, A.ARCHIVE_NAME, CT.NAME, CU.USER_NAME, CP.NAME, PM.EVENT_TYPE, PM.FLAG_TYPE) AS TBL
-GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
-]]>
+		<![CDATA[select 2 as seq, company, function, archive, classification_tag, user_name, platform, max(msg_matched) as msg_matched, max(msg_flagged) as msg_flagged, max(msg_reviewd) as msg_reviewed, max(msg_added_container) as msg_container from
+(select c.company_name as company, f.name as function, a.archive_name as archive, ct.name as classification_tag, cu.user_name, cp.name as platform, pm.event_type, pm.flag_type, 
+    CASE WHEN pm.flag_type='PolicyMatched' THEN count(*) ELSE 0 END AS msg_matched,
+    CASE WHEN pm.flag_type='Flagged' THEN count(*)  ELSE 0 END AS msg_flagged,
+    CASE WHEN pm.flag_type='Reviewed' THEN count(*)  ELSE 0 END AS msg_reviewd, 
+    CASE WHEN pm.flag_type='PolicyMatchAddedToContainer' THEN count(*)  ELSE 0 END AS msg_added_container
+from policy_match pm 
+join applied_classification_tags act on act.archive_id=pm.archive_id and act.destination_message_id=pm.destination_message_id and act.classification_tag_id=pm.classification_tag_id
+join classification_tag ct on ct.classification_tag_id=pm.classification_tag_id
+join company_user cu on cu.user_id=act.user_id
+join function f on f.function_id=pm.function_id
+join message_delivered md on md.archive_id=pm.archive_id and md.destination_message_id=pm.destination_message_id
+join comunication_platform cp on cp.platform_id=md.platform_id
+join archive a on a.archive_id=pm.archive_id
+join company c on c.company_id=a.company_id
+ WHERE 1=1 
+group by c.company_name, f.name, a.archive_name, ct.name, cu.user_name, cp.name, pm.event_type, pm.flag_type) as tbl
+group by company, function, archive, classification_tag, user_name, platform
+union
+select 1 as seq, company, function, archive, 'Total of messages' as classification_tag, platform as user_name, '' as platform, max(msg_matched) as msg_matched, max(msg_flagged) as msg_flagged, max(msg_reviewd) as msg_reviewed, max(msg_added_container) as msg_container from
+(select c.company_name as company, f.name as function, a.archive_name as archive, cp.name as platform, pm.event_type, pm.flag_type, 
+    CASE WHEN pm.flag_type='PolicyMatched' THEN count(*) ELSE 0 END AS msg_matched,
+    CASE WHEN pm.flag_type='Flagged' THEN count(*)  ELSE 0 END AS msg_flagged,
+    CASE WHEN pm.flag_type='Reviewed' THEN count(*)  ELSE 0 END AS msg_reviewd, 
+    CASE WHEN pm.flag_type='PolicyMatchAddedToContainer' THEN count(*)  ELSE 0 END AS msg_added_container
+from policy_match pm 
+join applied_classification_tags act on act.archive_id=pm.archive_id and act.destination_message_id=pm.destination_message_id and act.classification_tag_id=pm.classification_tag_id
+join classification_tag ct on ct.classification_tag_id=pm.classification_tag_id
+join company_user cu on cu.user_id=act.user_id
+join function f on f.function_id=pm.function_id
+join message_delivered md on md.archive_id=pm.archive_id and md.destination_message_id=pm.destination_message_id
+join comunication_platform cp on cp.platform_id=md.platform_id
+join archive a on a.archive_id=pm.archive_id
+join company c on c.company_id=a.company_id
+ WHERE 1=1 
+group by c.company_name, f.name, a.archive_name, cp.name, pm.event_type, pm.flag_type) as tbl
+group by company, function, archive, platform]]>
 	</queryString>
 
 
+	<field name="seq" class="java.lang.Integer"></field>
 	<field name="company" class="java.lang.String"></field>
 	<field name="function" class="java.lang.String"></field>
 	<field name="archive" class="java.lang.String"></field>
 	<field name="classification_tag" class="java.lang.String"></field>
 	<field name="user_name" class="java.lang.String"></field>
+	<field name="platform" class="java.lang.String"></field>
 	<field name="msg_matched" class="java.lang.Long"></field>
 	<field name="msg_flagged" class="java.lang.Long"></field>
 	<field name="msg_reviewed" class="java.lang.Long"></field>
@@ -83,12 +102,27 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 		calculation="Sum">
 		<variableExpression><![CDATA[ $F{msg_reviewed} ]]></variableExpression>
 	</variable>
+	<variable name="user_any_match" class="java.lang.Integer"
+		resetType="Group" incrementType="None" resetGroup="UserName"
+		calculation="Sum">
+		<variableExpression><![CDATA[ $F{msg_matched} ]]></variableExpression>
+	</variable>
+	<variable name="user_msg_flagged" class="java.lang.Integer"
+		resetType="Group" incrementType="None" resetGroup="UserName"
+		calculation="Sum">
+		<variableExpression><![CDATA[ $F{msg_flagged} ]]></variableExpression>
+	</variable>
+	<variable name="user_state_changed" class="java.lang.Integer"
+		resetType="Group" incrementType="None" resetGroup="UserName"
+		calculation="Sum">
+		<variableExpression><![CDATA[ $F{msg_reviewed} ]]></variableExpression>
+	</variable>
 
 
 	<group name="ClassificationTag" isStartNewColumn="false"
 		isStartNewPage="false" isResetPageNumber="false"
 		isReprintHeaderOnEachPage="true" minHeightToStartNewPage="0">
-		<groupExpression><![CDATA[ $F{classification_tag} ]]></groupExpression>
+		<groupExpression><![CDATA[$F{classification_tag} ]]></groupExpression>
 		<groupHeader>
 			<band height="17" isSplitAllowed="true">
 				<staticText>
@@ -112,7 +146,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 							isPdfEmbedded="false" pdfEncoding="Cp1252"
 							isStrikeThrough="false" />
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[ $F{classification_tag} ]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{classification_tag} ]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="250" y="0" width="780" height="16"
@@ -239,6 +273,109 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 			</band>
 		</groupFooter>
 	</group>
+	<group name="UserName" isStartNewColumn="false"
+		isStartNewPage="false" isResetPageNumber="false"
+		isReprintHeaderOnEachPage="true" minHeightToStartNewPage="0">
+		<groupExpression><![CDATA[ $F{user_name} ]]></groupExpression>
+		<groupHeader>
+			<band height="17" isSplitAllowed="true">
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="0" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["     "+ $F{user_name} ]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="150" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[ $V{user_any_match}.toString()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="300" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[ $V{user_msg_flagged} ]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="450" y="0" width="180" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{user_any_match}>0 ? Formatter.formatNumber(($V{user_msg_flagged}/(double)$V{user_any_match})*100,2) : "0.00"
+]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="630" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{user_msg_flagged}-$V{user_state_changed}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="780" y="0" width="150" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[ $V{user_state_changed}.toString()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" evaluationTime="Group"
+					evaluationGroup="UserName">
+					<reportElement x="930" y="0" width="100" height="16"
+						mode="Opaque" forecolor="#000000" backcolor="#9F9F9F" />
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="10"
+							isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1252"
+							isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{user_any_match}>0 ? Formatter.formatNumber(($V{user_state_changed}/(double)$V{user_any_match})*100,2) : "0.00"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="16" width="1030" height="1"
+						forecolor="#ffffff" backcolor="#ffffff" />
+					<graphicElement />
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="0" isSplitAllowed="true">
+			</band>
+		</groupFooter>
+	</group>
 
 
 	<title>
@@ -260,7 +397,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 			</line>
 			<staticText>
 				<reportElement x="0" y="58" width="1030" height="25"
-					mode="Opaque" forecolor="#000000" backcolor="#AFAFAF"
+					mode="Opaque" forecolor="#000000" backcolor="Proof"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -269,7 +406,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 				<textElement textAlignment="Center">
 					<font reportFont="SansSerif_Normal" size="20" />
 				</textElement>
-				<text><![CDATA[Proof of Supervision Report - MPP-dev]]></text>
+				<text><![CDATA[Proof of Supervision Report per Policy - MPP-dev]]></text>
 			</staticText>
 			<line direction="TopDown">
 				<reportElement x="0" y="84" width="1030" height="1"
@@ -424,7 +561,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 						isBold="false" isItalic="false" isUnderline="false"
 						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["01-Jan-2018"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="300" y="148" width="730" height="16"
@@ -456,7 +593,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 						isBold="false" isItalic="false" isUnderline="false"
 						isPdfEmbedded="false" pdfEncoding="Cp1252" isStrikeThrough="false" />
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["31-Jan-2018"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="300" y="164" width="730" height="16"
@@ -487,7 +624,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 		<band height="20" isSplitAllowed="true">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="5" width="150"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -497,11 +634,11 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
 						isBold="true" />
 				</textElement>
-				<text><![CDATA[User Name]]></text>
+				<text><![CDATA[Platform]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="150" y="5" width="150"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -515,7 +652,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="300" y="5" width="150"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -525,11 +662,11 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
 						isBold="true" />
 				</textElement>
-				<text><![CDATA[Message flaged for review]]></text>
+				<text><![CDATA[Message flagged for review]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="450" y="5" width="180"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -539,11 +676,11 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 					<font reportFont="SansSerif_Bold" pdfFontName="Helvetica"
 						isBold="true" />
 				</textElement>
-				<text><![CDATA[Message flaged for review %]]></text>
+				<text><![CDATA[Message flagged for review %]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="630" y="5" width="150"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -557,7 +694,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="780" y="5" width="150"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -571,7 +708,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="930" y="5" width="100"
-					height="15" forecolor="#000000" backcolor="#979797"
+					height="15" forecolor="#000000" backcolor="#878787"
 					key="staticText" />
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None"
 					leftBorderColor="#000000" rightBorder="None"
@@ -594,7 +731,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 				</reportElement>
 				<textElement textAlignment="Left" />
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["     "+ $F{user_name} ]]>
+					<![CDATA["          "+$F{platform} ]]>
 				</textFieldExpression>
 			</textField>
 			<textField pattern="" evaluationTime="Now">
@@ -604,7 +741,7 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 				</reportElement>
 				<textElement textAlignment="Left" />
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["     "+ $F{user_name} ]]>
+					<![CDATA["          "+$F{platform} ]]>
 				</textFieldExpression>
 			</textField>
 			<line>
@@ -802,5 +939,4 @@ GROUP BY COMPANY, FUNCTION, ARCHIVE, CLASSIFICATION_TAG, USER_NAME
 		</band>
 	</summary>
 </jasperReport>
-
 

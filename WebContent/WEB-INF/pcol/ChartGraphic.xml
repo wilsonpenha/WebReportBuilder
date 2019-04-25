@@ -20,6 +20,33 @@
     <setmethod>setChartName</setmethod>
   </attr>
   <attr>
+    <name>subDataSet</name>
+    <colname>SUB_DATA_SET</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getSubDataSet</getmethod>
+    <setmethod>setSubDataSet</setmethod>
+  </attr>
+  <attr>
+    <name>chartBandCode</name>
+    <colname>CHART_BAND_CODE</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getChartBandCode</getmethod>
+    <setmethod>setChartBandCode</setmethod>
+  </attr>
+  <attr>
+    <name>bandLocation</name>
+    <colname>BAND_LOCATION</colname>
+    <javatype>java.lang.String</javatype>
+    <sqltype>VARCHAR</sqltype>
+    <pk>false</pk>
+    <getmethod>getBandLocation</getmethod>
+    <setmethod>setBandLocation</setmethod>
+  </attr>
+  <attr>
     <name>reportId</name>
     <colname>REPORT_ID</colname>
     <javatype>java.math.BigDecimal</javatype>

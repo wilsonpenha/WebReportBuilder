@@ -11,7 +11,8 @@
 	String pageC = PropertiesManager.getString("app.tab.pageCols",request);
 	String summaryC = PropertiesManager.getString("app.tab.summaryCols",request);
 	String groups = PropertiesManager.getString("app.tab.groups",request);
-	String[] tabSheetOff = {report,queryB,variables,params,fields,detailC,titleC,pageC,summaryC,groups};
+	String charts = PropertiesManager.getString("app.tab.chartGraphic",request);
+	String[] tabSheetOff = {report,queryB,variables,params,fields,detailC,titleC,pageC,summaryC,groups,charts};
 	String[] tabSheetOffAction = {"javascript:setObjIds(document.forms[0],"+request.getParameter("reportId")+");setAction(document.forms[0],'"+BeanObject.ACTION_FORM_UPDATE+"');document.forms[0].action='../beanReport.do';document.forms[0].submit();",
 								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../queryBuilder.do';document.forms[0].submit();",
 								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanVariables.do';document.forms[0].submit();",
@@ -21,7 +22,8 @@
 								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanReportColumns.do';document.forms[0].submit();",
 								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanPageColumns.do';document.forms[0].submit();",
 								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanSummaryColumns.do';document.forms[0].submit();",
-								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanGroups.do';document.forms[0].submit();"};
-	String[] tabSheetOffSize = {"40","85","55","70","35","65","60","60","82","40"};
+								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanGroups.do';document.forms[0].submit();",
+								  "javascript:setAction(document.forms[0],'"+BeanObject.ACTION_SELECT_LIST+"');document.forms[0].action='../beanChartGraphic.do';document.forms[0].submit();"};
+	String[] tabSheetOffSize = {"40","85","55","70","35","65","60","60","82","40","60"};
 %>
 <%=BeanObject.getTabSheet(request.getParameter("tabSheetOn"),tabSheetOff,tabSheetOffAction,tabSheetOffSize)%>

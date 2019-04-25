@@ -989,7 +989,7 @@ public abstract class BeanObject extends ActionForm{
 			html += "  <td class=\"tdEsqOff\">&nbsp;</td>\r";
 			html += "  <td width=\""+tabSheetOffSize[i]+"\" nowrap class=\"tdGuiaOff\"><input type=\"button\" value=\""+tabSheetOff[i]+"\" onClick=\""+tabSheetOffAction[i]+"\" style=\"{width: "+tabSheetOffSize[i]+"px;}\" name=\"btnAnterior\" id=\"btnGuia\"></td>\r";
 			html += "  <td class=\"tdDirOff\">&nbsp;</td>\r";
-		}
+		} 
 	}
 	html += "  <td width=\"*\">&nbsp;</td>\r";
 	html += "</tr>\r";

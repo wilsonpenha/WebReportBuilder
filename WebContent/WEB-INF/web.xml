@@ -55,7 +55,7 @@
 	<servlet>
 		<display-name>ImageServlet</display-name>
 		<servlet-name>ImageServlet</servlet-name>
-		<servlet-class>reports.util.ImageServlet</servlet-class>
+		<servlet-class>net.sf.jasperreports.j2ee.servlets.ImageServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>GraphicServlet</display-name>
