@@ -127,24 +127,26 @@
 				        </td>
 	                <%}%>
 	              </tr>
+	              <%int row = 0; %>
 	              <%while (beanPage.getRetorno().next()){%>
-			         <%if (beanPage.getRetorno().getRow() % 2 == 0) {%>
-				      <tr id="linha<%=beanPage.getRetorno().getRow()-1%>" bgcolor="#F7F4F2" style="{cursor:hand}" onMouseover="setColorOn('linha<%=beanPage.getRetorno().getRow()-1%>');" onMouseout="setColorOff('linha<%=beanPage.getRetorno().getRow()-1%>');">
+			         <%if (row % 2 == 0) {%>
+				      <tr id="linha<%=row%>" bgcolor="#F7F4F2" style="{cursor:hand}" onMouseover="setColorOn('linha<%=row%>');" onMouseout="setColorOff('linha<%=row%>');">
 				       <%}else{%>
-				      <tr id="linha<%=beanPage.getRetorno().getRow()-1%>" bgcolor="#D3DCE7" style="{cursor:hand}" onMouseover="setColorOn('linha<%=beanPage.getRetorno().getRow()-1%>');" onMouseout="setColorOff('linha<%=beanPage.getRetorno().getRow()-1%>');">
+				      <tr id="linha<%=row%>" bgcolor="#D3DCE7" style="{cursor:hand}" onMouseover="setColorOn('linha<%=row%>');" onMouseout="setColorOff('linha<%=row%>');">
 				       <%}%>
-				         <td id="<%=beanPage.getRetorno().getRow()-1%>"width="5">
-					       <%=beanPage.getRetorno().getRow()%>
+				         <td id="<%=row%>"width="5">
+					       <%=row%>
 				         </td>
 				         <%for (int i=1;i<=beanPage.getRetorno().getMetaData().getColumnCount();i++){%>
-					        <td nowrap="1" id="<%=beanPage.getRetorno().getRow()-1%>">
+					        <td nowrap="1" id="<%=row%>">
 						      <%=beanPage.getRetorno().getString(i)%>
 					        </td>
 				         <%}%>
 				      </tr>
-				      <%if (beanPage.getRetorno().getRow()>Integer.parseInt(beanPage.getMaxRows())){
+				      <%if (row>Integer.parseInt(beanPage.getMaxRows())){
 						break;
-					  }%>
+					  }
+					  row++;%>
 	              <%}%>
 	              <%
 				try{

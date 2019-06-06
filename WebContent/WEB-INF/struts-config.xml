@@ -57,6 +57,10 @@
 			<forward name="showReportPreview" path="report.preview">
 			</forward>
 		</action>
+		<action path="/reportService" type="reports.actions.BeanReportServiceAction" name="beanReport" scope="request">
+			<forward name="showReportService" path="report.service">
+			</forward>
+		</action>
 		<action path="/beanReportServer" type="reports.actions.BeanReportServerAction" name="beanReport" scope="request">
 			<forward name="showDisplayList" path="report.server.displayList">
 			</forward>

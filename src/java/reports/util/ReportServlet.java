@@ -13,9 +13,13 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +53,7 @@ import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -180,10 +185,19 @@ public class ReportServlet extends HttpServlet implements Servlet {
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+
+		Connection conn = null;
+
 		try {
 			// Populate context
 
+//			String jsonString = IOUtils.toString(req.getInputStream());
+//			JSONObject json = new JSONObject(jsonString);
+			
 			String format = req.getParameter("format");
+			String service = req.getParameter("service");
+			String userId = req.getParameter("userId");
+			String companyId = req.getParameter("companyId");
 			String[] paramName = req.getParameterValues("paramName");
 			String[] paramValue = req.getParameterValues("paramValue");
 		
@@ -200,6 +214,8 @@ public class ReportServlet extends HttpServlet implements Servlet {
 					this.report = Report.findByID(new BigDecimal(req.getParameter("reportId")));
 				}
 	
+				conn = this.getConnection();
+				
 				VelocityContext context = new VelocityContext();
 				addDataToContext(context, req, resp);
 	
@@ -234,7 +250,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 				// Create JasperPrint object using the fillReport() method in
 				// JasperFillManager class
 				jasperPrint = JasperFillManager.fillReport(
-						jasperReport, parameters, getConnection());
+						jasperReport, parameters, conn);
 	
 				if (format.equals(TASK_HTML)){
 					req.getSession().setAttribute("JASPER_PRINT", jasperPrint);
@@ -244,16 +260,23 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			}
 	
 			if (format.equals(TASK_PDF)) {
-//				JasperExportManager.exportReportToPdfFile(jasperPrint, "/home/wilson.penha/Downloads/report.pdf"); 
-				byte[] bytes = JasperRunManager.runReportToPdf(jasperReport, parameters, getConnection());
-				resp.setContentType("application/pdf");
-				resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".pdf");
-				ServletOutputStream outputStream = resp.getOutputStream();
-				resp.setContentLength(bytes.length);
-				outputStream = resp.getOutputStream();
-				outputStream.write(bytes, 0, bytes.length);
-				outputStream.flush();
-				outputStream.close();
+				if (service.equals("rest")) {
+					long currentTimestamp = new Date().getTime();
+					Path cacheDir = Paths.get("/data1/cache_reports",companyId,userId);
+					if (!Files.exists(cacheDir))
+						Files.createDirectories(cacheDir);
+					JasperExportManager.exportReportToPdfFile(jasperPrint, cacheDir.toAbsolutePath()+"/"+jasperPrint.getName()+"_"+currentTimestamp+".pdf"); 
+				}else {
+					byte[] bytes = JasperRunManager.runReportToPdf(jasperReport, parameters, conn);
+					resp.setContentType("application/pdf");
+					resp.setHeader("Content-Disposition", "inline; filename="+jasperPrint.getName()+".pdf");
+					ServletOutputStream outputStream = resp.getOutputStream();
+					resp.setContentLength(bytes.length);
+					outputStream = resp.getOutputStream();
+					outputStream.write(bytes, 0, bytes.length);
+					outputStream.flush();
+					outputStream.close();
+				}
 			} else {
 				JRExporter exporter = null;
 				/*************************************************************** 
@@ -535,13 +558,24 @@ public class ReportServlet extends HttpServlet implements Servlet {
 				}
 			}
 			
-
 		} catch (JRException e) {
 			ErrorLog.println("error in Buildding report by JRException reason!", e);
-			forwardToErrorJSP(req, resp, e);
+			throw new ServletException(e);
+//			forwardToErrorJSP(req, resp, e);
 		} catch (Exception e) {
 			ErrorLog.println("error in Buildding report by unknow reason!", e);
-			forwardToErrorJSP(req, resp, e);
+			throw new ServletException(e);
+//			forwardToErrorJSP(req, resp, e);
+		}finally {
+			try {
+				if (conn!=null && !conn.isClosed()) {
+					System.out.println("Connection closed!");
+					conn.close();
+				}
+			}catch (Exception e) {
+				throw new ServletException("Unable to close DB connection!");
+			}
+
 		}
 	}
 
@@ -651,7 +685,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			
 		}
 
-		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false")){
+		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false") && req.getParameter("service").equals("server")){
 			if (sGroups!=null){
 				for (int i=0;i<sGroups.length;i++){
 					Groups groups = Groups.findByID(new BigDecimal(sGroups[i]));
@@ -684,7 +718,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			}
 		}
 		
-		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false")){
+		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false") && req.getParameter("service").equals("server")){
 			if (sGroupColumns!=null){
 				for (int i=0;i<sGroupColumns.length;i++){ 
 					int pos = sGroupColumns[i].indexOf("|");
@@ -702,7 +736,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			}
 		}
 		
-		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false")){  
+		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false") && req.getParameter("service").equals("server")){  
 			vColumnList = Columns.findByReportBandType(this.report,"Detail");
 			Vector tmpColumns = new Vector(); 
 			for (int i=0;i<vColumnList.size();i++){
@@ -718,7 +752,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			vColumnList = Columns.findByReportBandType(this.report,"Detail");
 		}
 
-		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false")){
+		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false") && req.getParameter("service").equals("server")){
 			if (sSummaryColumns!=null){
 				vSummaryList = Columns.findByReportBandType(this.report,"Summary");
 				Vector tmpColumns = new Vector();
@@ -736,7 +770,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			vSummaryList = Columns.findByReportBandType(this.report,"Summary");
 		}
 
-		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false")){
+		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false") && req.getParameter("service").equals("server")){
 			if (sPageColumns!=null){
 				vPageList = Columns.findByReportBandType(this.report,"Page"); 
 				Vector tmpColumns = new Vector();
@@ -754,7 +788,7 @@ public class ReportServlet extends HttpServlet implements Servlet {
 			vPageList = Columns.findByReportBandType(this.report,"Page");
 		}
 
-		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false")){
+		if (req.getParameter("designer")!=null && req.getParameter("designer").equals("false") && req.getParameter("service").equals("server")){
 			if (sTitleColumns!=null){
 				vReportList = Columns.findByReportBandType(this.report,"Report");
 				Vector tmpColumns = new Vector();

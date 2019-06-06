@@ -47,6 +47,7 @@
             <input type="hidden" name="reportId" value="<%=beanPage.getReportId()%>">
             <input type="hidden" name="reload" value="true">
             <input type="hidden" name="designer" value="false">
+            <input type="hidden" name="service" value="server">
             <tr>
               <td width="32%" class="dataLabel">Report Orientation : </td>
               <td width="66%" class="inputLocation">

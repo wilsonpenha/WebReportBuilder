@@ -39,6 +39,8 @@
 	</definition>
 	<definition name="report.preview" path="/jsp/beanMainReport/body.jsp">
 	</definition>
+	<definition name="report.service" path="/jsp/beanReportService/body.jsp">
+	</definition>
 	<definition name="report.colorPicker" path="/jsp/colorPicker.jsp">
 	</definition>
 	<definition name="report.server.displayList" extends="body.template.definition">

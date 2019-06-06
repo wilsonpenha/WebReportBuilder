@@ -2,6 +2,7 @@
     <wb-module deploy-name="WebReportBuilder">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test"/>
         <property name="context-root" value="WebReportBuilder"/>
         <property name="java-output-path" value="/WebReportBuilder/build/classes"/>
     </wb-module>
