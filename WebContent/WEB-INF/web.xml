@@ -354,13 +354,13 @@
 		Auto Generated - SDO Datasource connection to jdbc:mysql://hadoopflex1:5432:postgressql</description>
 		<env-entry-name>jdbc/mpp_ds</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>jdbc:postgressql://hadoopflex1-sin-salsnap1-nvan.dev-globalrelay.net:5432/ers,org.postgresql.Driver,WebReportBuilder</env-entry-value>
+		<env-entry-value>jdbc:postgressql://10.178.67.83:5432/ers,org.postgresql.Driver,WebReportBuilder</env-entry-value>
 	</env-entry>
 	<env-entry>
 		<description>
 		Auto Generated - SDO Datasource connection to Hive</description>
 		<env-entry-name>jdbc/sal_ds</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>jdbc:hive2://hadoopmaster1-sin-salsnap1-nvan.dev-globalrelay.net:10000/default;user=admin;password=admin;auth=noSasl,org.apache.hive.jdbc.HiveDriver,hive</env-entry-value>
+		<env-entry-value>jdbc:hive2://10.178.67.81:10000/default;user=admin;password=admin;auth=noSasl,org.apache.hive.jdbc.HiveDriver,hive</env-entry-value>
 	</env-entry>
 </web-app>
