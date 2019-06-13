@@ -38,7 +38,7 @@
       minEvictableIdleTimeMillis="60000"
       removeAbandoned="false"
       validationQuery="SELECT 1;"
-      url="jdbc:postgresql://hadoopflex1-sin-salsnap1-nvan.dev-globalrelay.net:5432/ers"
+      url="jdbc:postgresql://10.178.67.83:5432/ers"
       factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"/>
 	
 	<Resource
@@ -53,7 +53,7 @@
       password="admin"
       driverClassName="org.apache.hive.jdbc.HiveDriver"
       username="admin"
-      url="jdbc:hive2://hadoopmaster1-sin-salsnap1-nvan.dev-globalrelay.net:10000/default;user=admin;password=admin;auth=noSasl"
+      url="jdbc:hive2://10.178.67.81:10000/default;user=admin;password=admin;auth=noSasl"
       testWhileIdle="true"
       testOnReturn="true"
       timeBetweenEvictionRunsMillis="60000"
@@ -74,7 +74,7 @@
       password="admin"
       driverClassName="com.cloudera.impala.jdbc4.Driver"
       username="admin"
-      url="jdbc:impala://hadoopflex2-sin-salsnap1-nvan.dev-globalrelay.net:21050/default;user=admin;password=admin;auth=noSasl"
+      url="jdbc:impala://10.178.67.84:21050/default;user=admin;password=admin;auth=noSasl"
       testWhileIdle="true"
       testOnReturn="true"
       timeBetweenEvictionRunsMillis="60000"
@@ -95,7 +95,7 @@
       password=""
       driverClassName="com.facebook.presto.jdbc.PrestoDriver"
       username="wilson.penha"
-      url="jdbc:presto://hadoopflex1-sin-salsnap1-nvan.dev-globalrelay.net:8080/hive-sal/default?SSL=false"
+      url="jdbc:presto://10.178.67.83:8080/hive-sal/default?SSL=false"
       testWhileIdle="true"
       testOnReturn="true"
       timeBetweenEvictionRunsMillis="60000"
