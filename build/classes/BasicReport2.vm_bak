@@ -574,7 +574,7 @@ bcz of that headerPos bug with vertical, I will consider Horizontal for groups
 		#end
 		<image>
   			<reportElement x="0" y="1" width="350" height="56"/>
-  			<imageExpression><![CDATA["/data/workspace/WebReportBuilder/WebContent/jsp/common/images/gr-logo.png"]]>
+  			<imageExpression><![CDATA["/data/workspace/WebReportBuilder/WebContent/jsp/common/images/head.jpg"]]>
             </imageExpression>
         </image>
 		#if ($format!="htmlNoBreaks")
